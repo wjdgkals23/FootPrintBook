@@ -8,10 +8,10 @@
 
 import Foundation
 
-class FootPrint {
-    var postId: String?
-    var userId: String?
+class FootPrint: Codable {
     var title: String?
     var image: Data?
+    var latitude = 0.0
+    var longitude = 0.0
     var created = Date()
 }

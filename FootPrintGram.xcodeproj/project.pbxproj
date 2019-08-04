@@ -15,6 +15,7 @@
 		9003454022F51A34007573E3 /* FootPrint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003453F22F51A34007573E3 /* FootPrint.swift */; };
 		9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */; };
 		9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454722F52F6C007573E3 /* MakeAlert.swift */; };
+		9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454922F67573007573E3 /* NewFootPrintViewController.swift */; };
 		9A1B210A6CA163B149E2A638 /* Pods_FootPrintGram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87909D11942DB9E49B2755FF /* Pods_FootPrintGram.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		9003453F22F51A34007573E3 /* FootPrint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrint.swift; sourceTree = "<group>"; };
 		9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotation.swift; sourceTree = "<group>"; };
 		9003454722F52F6C007573E3 /* MakeAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAlert.swift; sourceTree = "<group>"; };
+		9003454922F67573007573E3 /* NewFootPrintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFootPrintViewController.swift; sourceTree = "<group>"; };
 		A54965882B5E8D96009E03C7 /* Pods-FootPrintGram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.debug.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.debug.xcconfig"; sourceTree = "<group>"; };
 		C2729B6F5A9C99E69BA31B8B /* Pods-FootPrintGram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.release.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,20 +90,12 @@
 				9003453E22F51671007573E3 /* ViewController */,
 				9003453C22F51655007573E3 /* Model */,
 				9003453B22F51646007573E3 /* Storyboard */,
-				9003453A22F5163E007573E3 /* ViewModel */,
 				9003452822F51197007573E3 /* AppDelegate.swift */,
 				9003452F22F51198007573E3 /* Assets.xcassets */,
 				9003453122F51198007573E3 /* LaunchScreen.storyboard */,
 				9003453422F51198007573E3 /* Info.plist */,
 			);
 			path = FootPrintGram;
-			sourceTree = "<group>";
-		};
-		9003453A22F5163E007573E3 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		9003453B22F51646007573E3 /* Storyboard */ = {
@@ -125,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				9003452A22F51197007573E3 /* MapViewController.swift */,
+				9003454922F67573007573E3 /* NewFootPrintViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -256,6 +251,7 @@
 				9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */,
 				9003452B22F51197007573E3 /* MapViewController.swift in Sources */,
 				9003454022F51A34007573E3 /* FootPrint.swift in Sources */,
+				9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */,
 				9003452922F51197007573E3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -21,10 +21,29 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="x27-jB-53S"/>
+                    <connections>
+                        <segue destination="wMa-qM-3XR" kind="show" identifier="NewFootPrint" id="DaX-Hu-ypK"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="922" y="-654"/>
+        </scene>
+        <!--New Foot Print View Controller-->
+        <scene sceneID="3AQ-XA-UXf">
+            <objects>
+                <viewController id="wMa-qM-3XR" customClass="NewFootPrintViewController" customModule="FootPrintGram" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="htb-vs-IBL">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="M90-On-Xx5"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="jpq-G7-XGy"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0F6-fX-rXX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1759" y="-654"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="2aI-x4-3ZO">

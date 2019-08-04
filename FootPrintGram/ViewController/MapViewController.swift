@@ -14,7 +14,7 @@ import SnapKit
 class MapViewController: UIViewController {
     
     var mapView: MKMapView! = MKMapView()
-    var addPinButton: UIButton! = UIButton()
+    var addPinButton: UIView! = UIView()
     var rightMove: UIButton! = UIButton()
     
     var lastAnnotation: FootPrintAnnotation!
@@ -30,25 +30,43 @@ class MapViewController: UIViewController {
         self.navigationController?.isNavigationBarHidden = true
         self.view.addSubview(addPinButton)
         self.view.addSubview(mapView)
+        
         addPinButton.snp.makeConstraints { (make) in
             make.left.right.bottom.equalTo(self.view)
             make.height.equalTo(80)
         }
         addPinButton.backgroundColor = #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1)
-        addPinButton.setImage(#imageLiteral(resourceName: "PinPoint"), for: .normal)
+        
+        
+        let imageView = UIImageView.init(image: #imageLiteral(resourceName: "AddPin"))
+        addPinButton.addSubview(imageView)
+        imageView.snp.makeConstraints { (make) in
+            make.centerX.equalTo(addPinButton)
+            make.centerY.equalTo(addPinButton)
+            make.width.equalTo(40)
+        }
         
         mapView.snp.makeConstraints { (make) in
             make.right.top.left.equalTo(self.view.safeAreaLayoutGuide)
             make.bottom.equalTo(addPinButton.snp.top)
         }
+        
+        let removeButton = UIImageView.init(image: #imageLiteral(resourceName: "RemovePin"))
+        removeButton.isUserInteractionEnabled = true
+        let mapTap = UITapGestureRecognizer.init(target: self, action: #selector(modifyPin))
+        removeButton.addGestureRecognizer(mapTap)
+        mapView.addSubview(removeButton)
+        removeButton.snp.makeConstraints { (make) in
+            make.bottom.right.equalTo(mapView).offset(-10)
+            make.width.equalTo(50)
+        }
         mapView.isZoomEnabled = false
         mapView.isScrollEnabled = false
         
         rightMove.addTarget(self, action: #selector(rightMoving), for: .touchUpInside)
-        addPinButton.addTarget(self, action: #selector(addPin), for: .touchUpInside)
         
-        let mapTap = UITapGestureRecognizer.init(target: self, action: #selector(modifyPin))
-        mapView.addGestureRecognizer(mapTap)
+        let addPinTap = UITapGestureRecognizer.init(target: self, action: #selector(addPin))
+        addPinButton.addGestureRecognizer(addPinTap)
     }
     
     @objc func rightMoving() {
@@ -95,7 +113,7 @@ class MapViewController: UIViewController {
         if lastAnnotation != nil {
             alertManager?.makeOneActionAlert(target: self, title: "Annotation already dropped", message: "There is an annotation on screen. Tap the Map If you want Remove Annotation", dismiss: true)
         } else {
-            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Point")
+            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Post", subtitle: "Touch To Add Post")
             self.mapView.addAnnotation(lastAnnotation)
         }
     }
@@ -104,6 +122,8 @@ class MapViewController: UIViewController {
         if lastAnnotation != nil {
             mapView.removeAnnotation(lastAnnotation)
             lastAnnotation = nil
+        } else {
+            alertManager?.makeOneActionAlert(target: self, title: "Annotation already removed", message: "There is no a new annotation on screen.", dismiss: true)
         }
     }
     
@@ -112,9 +132,59 @@ class MapViewController: UIViewController {
         let zoomRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
         mapView.setRegion(zoomRegion, animated: true)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "NewFootPrint" {
+            let destination = segue.destination as! NewFootPrintViewController
+            let senderAnnotation = sender as! FootPrintAnnotation
+            destination.newAnnotation = senderAnnotation
+        }
+    }
 }
 
 extension MapViewController: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard let title = annotation.title! else {
+            return nil
+        }
+        
+        if (annotation is FootPrintAnnotation) {
+            if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: title) {
+                return annotationView
+            } else {
+                let currentAnnotation = annotation as! FootPrintAnnotation
+                let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: title)
+                
+                var flagImage = #imageLiteral(resourceName: "ExistFlag")
+                
+                if currentAnnotation.title == "New Post" {
+                    annotationView.isDraggable = true
+                    flagImage = #imageLiteral(resourceName: "EmptyFlag")
+                }
+                
+                let imageView = UIImageView.init(image: flagImage)
+                imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 25, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 25, width: 50, height: 50)
+                
+                annotationView.addSubview(imageView)
+                
+                annotationView.isEnabled = true
+                annotationView.canShowCallout = true
+                
+                let detailDisclosure = UIButton(type: .detailDisclosure)
+                annotationView.rightCalloutAccessoryView = detailDisclosure
+                
+                return annotationView
+            }
+        }
+        
+        return nil
+    }
+    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if let footprintAnnotation = view.annotation as? FootPrintAnnotation {
+            performSegue(withIdentifier: "NewFootPrint", sender: footprintAnnotation)
+        }
+    }
 }
 
 extension MapViewController: CLLocationManagerDelegate {
