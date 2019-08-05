@@ -140,6 +140,14 @@ class MapViewController: UIViewController {
             destination.newAnnotation = senderAnnotation
         }
     }
+    
+    @IBAction func unwindToMap(segue: UIStoryboardSegue) {
+        if segue.identifier == "cancel" {
+            print("cancel")
+        } else {
+            
+        }
+    }
 }
 
 extension MapViewController: MKMapViewDelegate {

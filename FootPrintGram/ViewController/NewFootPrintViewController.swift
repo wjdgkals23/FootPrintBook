@@ -86,7 +86,7 @@ class NewFootPrintViewController: UIViewController {
     }
     
     @objc func cancel(){
-        dismiss(animated: true, completion: nil)
+        performSegue(withIdentifier: "cancel", sender: self)
     }
     
 

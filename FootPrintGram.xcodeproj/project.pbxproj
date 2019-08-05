@@ -16,11 +16,13 @@
 		9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */; };
 		9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454722F52F6C007573E3 /* MakeAlert.swift */; };
 		9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454922F67573007573E3 /* NewFootPrintViewController.swift */; };
-		9A1B210A6CA163B149E2A638 /* Pods_FootPrintGram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87909D11942DB9E49B2755FF /* Pods_FootPrintGram.framework */; };
+		E7D31A658EC2FAD95E25C180 /* Pods_FootPrintGram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2ACB673494CFC850DD6F36 /* Pods_FootPrintGram.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		87909D11942DB9E49B2755FF /* Pods_FootPrintGram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FootPrintGram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C314C4AF485682D22AA21A9 /* Pods-FootPrintGram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.release.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.release.xcconfig"; sourceTree = "<group>"; };
+		377570EEBAE85531F46E1E5A /* Pods-FootPrintGram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.debug.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.debug.xcconfig"; sourceTree = "<group>"; };
+		6D2ACB673494CFC850DD6F36 /* Pods_FootPrintGram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FootPrintGram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9003452522F51197007573E3 /* FootPrintGram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FootPrintGram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9003452822F51197007573E3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9003452A22F51197007573E3 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
@@ -32,8 +34,6 @@
 		9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotation.swift; sourceTree = "<group>"; };
 		9003454722F52F6C007573E3 /* MakeAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAlert.swift; sourceTree = "<group>"; };
 		9003454922F67573007573E3 /* NewFootPrintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFootPrintViewController.swift; sourceTree = "<group>"; };
-		A54965882B5E8D96009E03C7 /* Pods-FootPrintGram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.debug.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.debug.xcconfig"; sourceTree = "<group>"; };
-		C2729B6F5A9C99E69BA31B8B /* Pods-FootPrintGram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.release.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,7 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A1B210A6CA163B149E2A638 /* Pods_FootPrintGram.framework in Frameworks */,
+				E7D31A658EC2FAD95E25C180 /* Pods_FootPrintGram.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,18 +51,10 @@
 		219796D7AF5B0DB1148446E1 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A54965882B5E8D96009E03C7 /* Pods-FootPrintGram.debug.xcconfig */,
-				C2729B6F5A9C99E69BA31B8B /* Pods-FootPrintGram.release.xcconfig */,
+				377570EEBAE85531F46E1E5A /* Pods-FootPrintGram.debug.xcconfig */,
+				1C314C4AF485682D22AA21A9 /* Pods-FootPrintGram.release.xcconfig */,
 			);
 			path = Pods;
-			sourceTree = "<group>";
-		};
-		757F77B8E6CDC91FC2F4A554 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				87909D11942DB9E49B2755FF /* Pods_FootPrintGram.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		9003451C22F51197007573E3 = {
@@ -71,7 +63,7 @@
 				9003452722F51197007573E3 /* FootPrintGram */,
 				9003452622F51197007573E3 /* Products */,
 				219796D7AF5B0DB1148446E1 /* Pods */,
-				757F77B8E6CDC91FC2F4A554 /* Frameworks */,
+				F75620CB61A003C210B13517 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -132,6 +124,14 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		F75620CB61A003C210B13517 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6D2ACB673494CFC850DD6F36 /* Pods_FootPrintGram.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -139,11 +139,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9003453722F51198007573E3 /* Build configuration list for PBXNativeTarget "FootPrintGram" */;
 			buildPhases = (
-				EDD4244929E76CC3C2796A97 /* [CP] Check Pods Manifest.lock */,
+				3779A9CA403C3E552CD5B6D2 /* [CP] Check Pods Manifest.lock */,
 				9003452122F51197007573E3 /* Sources */,
 				9003452222F51197007573E3 /* Frameworks */,
 				9003452322F51197007573E3 /* Resources */,
-				3D21547B3B00E985CE0EBD3A /* [CP] Embed Pods Frameworks */,
+				57E4D0EC61968C0617F3DF8B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -201,24 +201,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3D21547B3B00E985CE0EBD3A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EDD4244929E76CC3C2796A97 /* [CP] Check Pods Manifest.lock */ = {
+		3779A9CA403C3E552CD5B6D2 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -238,6 +221,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		57E4D0EC61968C0617F3DF8B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/TextFieldEffects/TextFieldEffects.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TextFieldEffects.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -396,11 +413,13 @@
 		};
 		9003453822F51198007573E3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A54965882B5E8D96009E03C7 /* Pods-FootPrintGram.debug.xcconfig */;
+			baseConfigurationReference = 377570EEBAE85531F46E1E5A /* Pods-FootPrintGram.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K7V5K2ZCCN;
 				INFOPLIST_FILE = FootPrintGram/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -414,11 +433,13 @@
 		};
 		9003453922F51198007573E3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2729B6F5A9C99E69BA31B8B /* Pods-FootPrintGram.release.xcconfig */;
+			baseConfigurationReference = 1C314C4AF485682D22AA21A9 /* Pods-FootPrintGram.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K7V5K2ZCCN;
 				INFOPLIST_FILE = FootPrintGram/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
