@@ -21,9 +21,6 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="x27-jB-53S"/>
-                    <connections>
-                        <segue destination="wMa-qM-3XR" kind="show" identifier="NewFootPrint" id="DaX-Hu-ypK"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -32,7 +29,7 @@
         <!--New Foot Print View Controller-->
         <scene sceneID="3AQ-XA-UXf">
             <objects>
-                <viewController id="wMa-qM-3XR" customClass="NewFootPrintViewController" customModule="FootPrintGram" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewFootPrintViewController" id="wMa-qM-3XR" customClass="NewFootPrintViewController" customModule="FootPrintGram" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="htb-vs-IBL">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -60,7 +57,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="zw4-cv-erH" kind="relationship" relationship="rootViewController" id="n09-ni-pGx"/>
+                        <segue destination="zw4-cv-erH" kind="relationship" relationship="rootViewController" id="gct-Jv-9Be"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qbx-EK-hDJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -78,6 +75,9 @@
                         <viewLayoutGuide key="safeArea" id="3H6-9e-vmq"/>
                     </view>
                     <navigationItem key="navigationItem" id="jli-q8-oHR"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="SignIn" id="5mN-m6-OLw"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="g6i-0J-QmN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -10,9 +10,10 @@ import UIKit
 import GoogleSignIn
 import FirebaseAuth
 
-class LoginViewController: UIViewController, GIDSignInUIDelegate {
+class LoginViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
 
     var googleSignButton = GIDSignInButton()
+    var userInfo = UserInfo.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,22 +24,31 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
         }
 //        googleSignButton.addTarget(self, action: #selector(googleSignIn), for: .touchUpInside)
         GIDSignIn.sharedInstance().uiDelegate = self
+        GIDSignIn.sharedInstance()?.delegate = self
         // Do any additional setup after loading the view.
     }
     
-//
-    
-   
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: [:])
     }
-    */
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        if let error = error {
+            print(error.localizedDescription)
+            return
+        }
+        
+        guard let authentication = user.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+        Auth.auth().signIn(with: credential) { [weak that = self] (user, error) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                that?.userInfo.uid = user?.user.uid
+                that?.userInfo.email = user?.user.email
+                that!.performSegue(withIdentifier: "SignIn", sender: that)
+            }
+        }
+    }
 
 }

@@ -19,6 +19,7 @@
 		CD71030AFB5AD01B99D2EA95 /* Pods_FootPrintGram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B5B484E04E9EE3191FC730A /* Pods_FootPrintGram.framework */; };
 		F46880F622F952D50079F07B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46880F522F952D50079F07B /* LoginViewController.swift */; };
 		F46880FC22F961B70079F07B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F46880FB22F961B70079F07B /* GoogleService-Info.plist */; };
+		F468810222FAA3D60079F07B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468810122FAA3D60079F07B /* UserInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		99227EEF6F4FE466895F6B97 /* Pods-FootPrintGram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.debug.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.debug.xcconfig"; sourceTree = "<group>"; };
 		F46880F522F952D50079F07B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F46880FB22F961B70079F07B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F468810122FAA3D60079F07B /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 			children = (
 				9003453F22F51A34007573E3 /* FootPrint.swift */,
 				9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */,
+				F468810122FAA3D60079F07B /* UserInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 				9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */,
 				9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */,
 				9003452B22F51197007573E3 /* MapViewController.swift in Sources */,
+				F468810222FAA3D60079F07B /* UserInfo.swift in Sources */,
 				9003454022F51A34007573E3 /* FootPrint.swift in Sources */,
 				9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */,
 				9003452922F51197007573E3 /* AppDelegate.swift in Sources */,

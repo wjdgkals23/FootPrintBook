@@ -6,15 +6,20 @@
 //  Copyright © 2019 JHM. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import SnapKit
 import TextFieldEffects
+import FirebaseStorage
+import FirebaseDatabase
 
-class NewFootPrintViewController: UIViewController {
+class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
+    
+    var userInfo = UserInfo.shared
     
     var newAnnotation: FootPrintAnnotation!
     var postImage: Data!
-
+    
     var titleField = HoshiTextField()
     var addImageButton = UIImageView()
     var latitudeTextField = HoshiTextField()
@@ -22,6 +27,17 @@ class NewFootPrintViewController: UIViewController {
     
     var cancelButton = UIButton()
     var registerButton = UIButton()
+    
+    // MARK: - Life Cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print(newAnnotation.coordinate.latitude)
+        // Do any additional setup after loading the view.
+        setupView()
+    }
+    
+    // MARK: - Private
     
     func componentSetting(target: UIView, title: String, superView: UIView, topView: UIView) {
         if let textTarget = target as? HoshiTextField {
@@ -66,7 +82,14 @@ class NewFootPrintViewController: UIViewController {
             make.top.equalTo(titleField.snp.bottom).offset(40)
             make.width.height.equalTo(100)
         }
+        
         addImageButton.image = #imageLiteral(resourceName: "AddImage")
+        addImageButton.isUserInteractionEnabled = true
+        
+        let imageViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(imagePicker))
+        addImageButton.addGestureRecognizer(imageViewTapGesture)
+        
+        registerButton.addTarget(self, action: #selector(registerPost), for: .touchUpInside)
         
         componentSetting(target: latitudeTextField, title: "latitude", superView: self.view, topView: addImageButton)
         componentSetting(target: longitudeTextField, title: "longitude", superView: self.view, topView: latitudeTextField)
@@ -78,26 +101,93 @@ class NewFootPrintViewController: UIViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print(newAnnotation.coordinate.latitude)
-        // Do any additional setup after loading the view.
-        setupView()
+    func failRegister(message: String) {
+        let alert = UIAlertController(title: message, message: "재시도 해주세요", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
+            self.dismiss(animated: false, completion: {
+                [weak self] in
+                self?.performSegue(withIdentifier: "unwindToSignUpVC", sender: self)
+            })
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
+
     
-    @objc func cancel(){
+    // MARK: - action
+    
+    @objc func cancel() {
         performSegue(withIdentifier: "cancel", sender: self)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @objc func registerPost() {
+        let settingMeta = StorageMetadata.init()
+        settingMeta.contentType = "image/jepg"
+        let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
+        let storage = Storage.storage().reference().child("userPostImage").child(userInfo.uid)
+    
+        DispatchQueue.global().async {
+            [weak self] in storage.putData(uploadImage!, metadata: settingMeta) { (data,error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    DispatchQueue.main.async {
+                        self!.failRegister(message: "사진등록실패")
+                    }
+                } else {
+                    storage.downloadURL(completion: { (url, error) in
+                        if let error = error {
+                            print(error.localizedDescription)
+                            DispatchQueue.main.async {
+                                self!.failRegister(message: "사진등록조회싪패")
+                            }
+                        } else {
+                            Database.database().reference().child("users").child(self!.userInfo.uid).childByAutoId().setValue(["name": self!.titleField.text, "profileImageURL": url?.absoluteString, "latitude": self!.latitudeTextField.text, "longitude": self!.longitudeTextField.text ] ) { (err, ref) in
+                                if let error = err {
+                                    DispatchQueue.main.async {
+                                        self!.failRegister(message: "최종등록실패")
+                                    }
+                                    print(error)
+                                } else {
+                                    DispatchQueue.main.async {
+                                        self!.dismiss(animated: true, completion: nil)
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        }
     }
-    */
-
+    
 }
+
+// MARK: - Delegate
+
+extension NewFootPrintViewController : UIImagePickerControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[.originalImage] as! UIImage
+        let ratio = image.size.height/image.size.width
+        self.addImageButton.snp.removeConstraints()
+        self.addImageButton.snp.makeConstraints { (make) in
+            make.centerX.equalTo(self.view)
+            make.top.equalTo(titleField.snp.bottom).offset(40)
+            make.width.equalTo(self.view.frame.width - 20)
+            make.height.equalTo((self.view.frame.width - 20)*ratio)
+        }
+        self.addImageButton.image = image
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func imagePicker() {
+        let imagePickerView = UIImagePickerController()
+        imagePickerView.delegate = self
+        imagePickerView.allowsEditing = true
+        imagePickerView.sourceType = .photoLibrary
+        
+        self.present(imagePickerView, animated: true, completion: nil)
+    }
+    
+}
+

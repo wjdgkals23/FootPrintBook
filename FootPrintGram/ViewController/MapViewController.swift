@@ -189,8 +189,10 @@ extension MapViewController: MKMapViewDelegate {
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        if let footprintAnnotation = view.annotation as? FootPrintAnnotation {
-            performSegue(withIdentifier: "NewFootPrint", sender: footprintAnnotation)
+        if let senderAnnotation = view.annotation as? FootPrintAnnotation {
+            let view = self.storyboard?.instantiateViewController(withIdentifier: "NewFootPrintViewController") as! NewFootPrintViewController
+            view.newAnnotation = senderAnnotation
+            self.present(view, animated: true, completion: nil)
         }
     }
 }
