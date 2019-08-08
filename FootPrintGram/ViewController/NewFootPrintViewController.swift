@@ -28,6 +28,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     var cancelButton = UIButton()
     var registerButton = UIButton()
     
+    @IBOutlet weak var contentView: UIView!
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -57,28 +58,28 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         superView.addSubview(target)
         
         target.snp.makeConstraints { (make) in
-            make.left.equalTo(superView.safeAreaLayoutGuide).offset(15)
-            make.right.equalTo(superView.safeAreaLayoutGuide).offset(-15)
+            make.left.equalTo(superView).offset(15)
+            make.right.equalTo(superView).offset(-15)
             make.top.equalTo(topView.snp.bottom).offset(10)
             make.height.equalTo(40)
         }
     }
     
     func setupView() {
-        self.view.addSubview(cancelButton)
+        self.contentView.addSubview(cancelButton)
         cancelButton.snp.makeConstraints { (make) in
-            make.top.equalTo(self.view.safeAreaLayoutGuide).offset(10)
-            make.right.equalTo(self.view.safeAreaLayoutGuide).offset(-10)
+            make.top.equalTo(contentView).offset(10)
+            make.right.equalTo(contentView).offset(-10)
             make.width.height.equalTo(40)
         }
         cancelButton.setImage(#imageLiteral(resourceName: "CloseIcon"), for: .normal)
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         
-        componentSetting(target: titleField, title: "Title", superView: self.view, topView: cancelButton)
+        componentSetting(target: titleField, title: "Title", superView: self.contentView, topView: cancelButton)
         
-        self.view.addSubview(addImageButton)
+        self.contentView.addSubview(addImageButton)
         addImageButton.snp.makeConstraints { (make) in
-            make.centerX.equalTo(self.view)
+            make.centerX.equalTo(contentView)
             make.top.equalTo(titleField.snp.bottom).offset(40)
             make.width.height.equalTo(100)
         }
@@ -91,9 +92,9 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         
         registerButton.addTarget(self, action: #selector(registerPost), for: .touchUpInside)
         
-        componentSetting(target: latitudeTextField, title: "latitude", superView: self.view, topView: addImageButton)
-        componentSetting(target: longitudeTextField, title: "longitude", superView: self.view, topView: latitudeTextField)
-        componentSetting(target: registerButton, title: "register", superView: self.view, topView: longitudeTextField)
+        componentSetting(target: latitudeTextField, title: "latitude", superView: self.contentView, topView: addImageButton)
+        componentSetting(target: longitudeTextField, title: "longitude", superView: self.contentView, topView: latitudeTextField)
+        componentSetting(target: registerButton, title: "register", superView: self.contentView, topView: longitudeTextField)
         
         if newAnnotation != nil {
             latitudeTextField.text = String(newAnnotation.coordinate.latitude)
