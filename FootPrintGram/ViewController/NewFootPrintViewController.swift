@@ -28,6 +28,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     var cancelButton = UIButton()
     var registerButton = UIButton()
     
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     // MARK: - Life Cycle
     

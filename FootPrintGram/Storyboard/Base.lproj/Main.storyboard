@@ -38,16 +38,17 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" placeholderIntrinsicWidth="414" placeholderIntrinsicHeight="128" translatesAutoresizingMaskIntoConstraints="NO" id="UCs-cw-5dx">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="128"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="818"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="UCs-cw-5dx" firstAttribute="top" secondItem="7f6-tz-Lje" secondAttribute="top" id="KOi-7K-E3T"/>
-                                    <constraint firstItem="UCs-cw-5dx" firstAttribute="width" secondItem="7f6-tz-Lje" secondAttribute="width" id="YLe-sc-E2f"/>
+                                    <constraint firstItem="UCs-cw-5dx" firstAttribute="width" secondItem="7f6-tz-Lje" secondAttribute="width" priority="750" id="YLe-sc-E2f"/>
                                     <constraint firstAttribute="bottom" secondItem="UCs-cw-5dx" secondAttribute="bottom" id="fyh-gE-LrL"/>
                                     <constraint firstAttribute="trailing" secondItem="UCs-cw-5dx" secondAttribute="trailing" id="iHR-W3-dOX"/>
                                     <constraint firstItem="UCs-cw-5dx" firstAttribute="leading" secondItem="7f6-tz-Lje" secondAttribute="leading" id="onD-A9-fYl"/>
+                                    <constraint firstItem="UCs-cw-5dx" firstAttribute="height" secondItem="7f6-tz-Lje" secondAttribute="height" id="y6T-jF-Hza"/>
                                 </constraints>
                             </scrollView>
                         </subviews>
@@ -63,6 +64,7 @@
                     <navigationItem key="navigationItem" id="jpq-G7-XGy"/>
                     <connections>
                         <outlet property="contentView" destination="UCs-cw-5dx" id="EUz-UB-3lL"/>
+                        <outlet property="scrollView" destination="7f6-tz-Lje" id="gkQ-Gy-hgW"/>
                         <segue destination="7o5-sF-k8Y" kind="unwind" identifier="cancel" unwindAction="unwindToMapWithSegue:" id="1OS-pZ-Xwc"/>
                     </connections>
                 </viewController>
