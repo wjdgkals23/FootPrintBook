@@ -28,8 +28,10 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     var cancelButton = UIButton()
     var registerButton = UIButton()
     
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var contentView: UIView!
+    var scrollView = UIScrollView()
+    var contentView = UIView()
+    
+    var firstHeight: CGFloat!
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -37,6 +39,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         print(newAnnotation.coordinate.latitude)
         // Do any additional setup after loading the view.
         setupView()
+        firstHeight = self.view.frame.height
     }
     
     // MARK: - Private
@@ -67,6 +70,18 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     }
     
     func setupView() {
+        self.scrollView.isUserInteractionEnabled = true
+        self.scrollView.isScrollEnabled = true
+        self.view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { (make) in
+            make.top.left.right.bottom.equalTo(self.view.safeAreaLayoutGuide)
+        }
+        self.scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints { (make) in
+            make.width.equalTo(self.scrollView)
+            make.height.equalTo(self.scrollView).priority(.low)
+            make.top.left.right.bottom.equalTo(self.scrollView)
+        }
         self.contentView.addSubview(cancelButton)
         cancelButton.snp.makeConstraints { (make) in
             make.top.equalTo(contentView).offset(10)
@@ -170,15 +185,23 @@ extension NewFootPrintViewController : UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         let image = info[.originalImage] as! UIImage
         let ratio = image.size.height/image.size.width
+        let height = (self.view.frame.width - 20)*ratio
         self.addImageButton.snp.removeConstraints()
         self.addImageButton.snp.makeConstraints { (make) in
             make.centerX.equalTo(self.view)
             make.top.equalTo(titleField.snp.bottom).offset(40)
             make.width.equalTo(self.view.frame.width - 20)
-            make.height.equalTo((self.view.frame.width - 20)*ratio)
+            make.height.equalTo(height)
         }
-        self.addImageButton.image = image
         
+        self.contentView.snp.removeConstraints()
+        self.contentView.snp.makeConstraints({ (make) in
+            make.width.equalTo(self.scrollView)
+            make.height.equalTo(firstHeight + (firstHeight - height)/2).priority(.low)
+            make.top.left.right.bottom.equalTo(self.scrollView)
+        })
+        
+        self.addImageButton.image = image
         dismiss(animated: true, completion: nil)
     }
     
