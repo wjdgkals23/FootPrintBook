@@ -10,13 +10,12 @@ import UIKit
 import MapKit
 import CoreLocation
 import SnapKit
+import FirebaseDatabase
 
 class MapViewController: UIViewController {
     
     var mapView: MKMapView! = MKMapView()
-    var addPinButton: UIView! = UIView()
-    var rightMove: UIButton! = UIButton()
-    
+
     var lastAnnotation: FootPrintAnnotation!
     
     let regionInMeters: CLLocationDistance = 500
@@ -24,53 +23,62 @@ class MapViewController: UIViewController {
     var locationManager = CLLocationManager()
     var userLocated = false
     
+    var userInfo = UserInfo.shared
+    var mainData: FootPrintAnnotationList!
+    var ref = Database.database().reference()
+    
+    var lastData: NSDictionary!
+    
     weak var alertManager = MakeAlert.shared
     
     func setupView() {
         self.navigationController?.isNavigationBarHidden = true
-        self.view.addSubview(addPinButton)
         self.view.addSubview(mapView)
         
-        addPinButton.snp.makeConstraints { (make) in
-            make.left.right.bottom.equalTo(self.view)
-            make.height.equalTo(80)
-        }
-        addPinButton.backgroundColor = #colorLiteral(red: 0.9607843161, green: 0.7058823705, blue: 0.200000003, alpha: 1)
-        
-        
-        let imageView = UIImageView.init(image: #imageLiteral(resourceName: "AddPin"))
-        addPinButton.addSubview(imageView)
-        imageView.snp.makeConstraints { (make) in
-            make.centerX.equalTo(addPinButton)
-            make.centerY.equalTo(addPinButton)
-            make.width.equalTo(40)
-        }
-        
         mapView.snp.makeConstraints { (make) in
-            make.right.top.left.equalTo(self.view.safeAreaLayoutGuide)
-            make.bottom.equalTo(addPinButton.snp.top)
+            make.right.top.left.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
         
-        let removeButton = UIImageView.init(image: #imageLiteral(resourceName: "RemovePin"))
+        let removeButton = UIImageView.init(image: #imageLiteral(resourceName: "RemoveBtn"))
         removeButton.isUserInteractionEnabled = true
         let mapTap = UITapGestureRecognizer.init(target: self, action: #selector(modifyPin))
         removeButton.addGestureRecognizer(mapTap)
+        
+        let addButton = UIImageView.init(image: #imageLiteral(resourceName: "AddBtn"))
+        addButton.isUserInteractionEnabled = true
+        let addPinTap = UITapGestureRecognizer.init(target: self, action: #selector(addPin))
+        addButton.addGestureRecognizer(addPinTap)
+        
+        let slideUp = UIImageView.init(image: #imageLiteral(resourceName: "SlideUpBtn"))
+        slideUp.isUserInteractionEnabled = true
+        let slideUpAction = UISwipeGestureRecognizer.init(target: self, action: #selector(swipeUp))
+        slideUpAction.direction = .up
+        slideUp.addGestureRecognizer(slideUpAction)
+        
         mapView.addSubview(removeButton)
         removeButton.snp.makeConstraints { (make) in
             make.bottom.right.equalTo(mapView).offset(-10)
-            make.width.equalTo(50)
+            make.width.height.equalTo(50)
         }
+        
+        mapView.addSubview(addButton)
+        addButton.snp.makeConstraints { (make) in
+            make.bottom.equalTo(mapView).offset(-10)
+            make.right.equalTo(removeButton).offset(-(removeButton.frame.size.width/2))
+            make.width.height.equalTo(50)
+        }
+        
+        mapView.addSubview(slideUp)
+        slideUp.snp.makeConstraints { (make) in
+            make.bottom.equalTo(mapView).offset(-20)
+            make.centerX.equalTo(mapView)
+            make.width.height.equalTo(50)
+        }
+        
+        
         mapView.isZoomEnabled = false
         mapView.isScrollEnabled = false
         
-        rightMove.addTarget(self, action: #selector(rightMoving), for: .touchUpInside)
-        
-        let addPinTap = UITapGestureRecognizer.init(target: self, action: #selector(addPin))
-        addPinButton.addGestureRecognizer(addPinTap)
-    }
-    
-    @objc func rightMoving() {
-//        location
     }
     
     func checkLocationAuthorization() {
@@ -103,9 +111,44 @@ class MapViewController: UIViewController {
         mapView.delegate = self
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        mainData = FootPrintAnnotationList.shared
         
         setupView()
         checkLocationAuthorization()
+    }
+    
+    @objc func swipeUp(gesture: UIGestureRecognizer){
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            if swipeGesture.direction == .up {
+                let group = DispatchGroup()
+                group.enter()
+                DispatchQueue.global().async {
+                    self.ref.child("users").child(self.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                        guard let value = (snapshot.value as? NSDictionary) else { return }
+                        if(value != self.lastData) {
+                            self.lastData = value
+                            self.mainData.fpaList = [FootPrintAnnotation]()
+                            for item in value.allValues {
+                                let it = item as! NSDictionary
+                                print(it)
+                                let cood = CLLocationCoordinate2D.init(latitude: Double(it["latitude"] as! String) as! CLLocationDegrees, longitude: Double(it["longitude"] as! String) as! CLLocationDegrees)
+                                print(cood)
+                                let title = it["name"] as? String
+                                let imageUrl = it["profileImageURL"] as? String
+                                let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!)
+                                print(item.title!)
+                                self.mainData.fpaList?.append(item)
+                            }
+                        }
+                        group.leave()
+                    }, withCancel: nil)
+                }
+                group.notify(queue: .main) {
+                    let view = self.storyboard?.instantiateViewController(withIdentifier: "AnnotationTableViewController") as! AnnotationTableViewController
+                    self.present(view, animated: true, completion: nil)
+                }
+            }
+        }
     }
     
     @objc func addPin() {
@@ -113,7 +156,7 @@ class MapViewController: UIViewController {
         if lastAnnotation != nil {
             alertManager?.makeOneActionAlert(target: self, title: "Annotation already dropped", message: "There is an annotation on screen. Tap the Map If you want Remove Annotation", dismiss: true)
         } else {
-            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Post", subtitle: "Touch To Add Post")
+            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Post", imageUrl: nil)
             self.mapView.addAnnotation(lastAnnotation)
         }
     }
@@ -167,7 +210,7 @@ extension MapViewController: MKMapViewDelegate {
                 
                 if currentAnnotation.title == "New Post" {
                     annotationView.isDraggable = true
-                    flagImage = #imageLiteral(resourceName: "EmptyFlag")
+                    flagImage = #imageLiteral(resourceName: "ExistFlag")
                 }
                 
                 let imageView = UIImageView.init(image: flagImage)
