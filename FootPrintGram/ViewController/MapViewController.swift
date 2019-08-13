@@ -221,8 +221,8 @@ extension MapViewController: MKMapViewDelegate {
                 let currentAnnotation = annotation as! FootPrintAnnotation
                 let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: title)
                 
-                let imageView = UIImageView.init(image: currentAnnotation.title == "New Post" ? #imageLiteral(resourceName: "FirstPrint") : #imageLiteral(resourceName: "MyPrint"))
-                if currentAnnotation.title == "New Post" {
+                let imageView = UIImageView.init(image: currentAnnotation.imageUrl == nil ? #imageLiteral(resourceName: "FirstPrint") : #imageLiteral(resourceName: "MyPrint"))
+                if currentAnnotation.imageUrl == nil {
                     imageView.tintColor = #colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1)
                 }
                 imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
