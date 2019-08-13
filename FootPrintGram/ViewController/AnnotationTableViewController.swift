@@ -24,8 +24,6 @@ class AnnotationTableViewController: UITableViewController, UIGestureRecognizerD
         print("tableView")
         
         annotationList = FootPrintAnnotationList.shared
-        print("here")
-        print(annotationList.fpaList?.count)
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -58,16 +56,6 @@ class AnnotationTableViewController: UITableViewController, UIGestureRecognizerD
     @objc func handleTap(_ gesture: UITapGestureRecognizer){
         dismiss(animated: true, completion: nil)
     }
-
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
-    }
-    */
 
     /*
     // Override to support conditional editing of the table view.

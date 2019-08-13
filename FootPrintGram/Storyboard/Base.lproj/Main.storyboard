@@ -39,6 +39,7 @@
                     <navigationItem key="navigationItem" id="jpq-G7-XGy"/>
                     <connections>
                         <segue destination="7o5-sF-k8Y" kind="unwind" identifier="cancel" unwindAction="unwindToMapWithSegue:" id="1OS-pZ-Xwc"/>
+                        <segue destination="7o5-sF-k8Y" kind="unwind" identifier="registerEnd" unwindAction="unwindToMapWithSegue:" id="t2o-P7-eVy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0F6-fX-rXX" userLabel="First Responder" sceneMemberID="firstResponder"/>

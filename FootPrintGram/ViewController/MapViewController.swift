@@ -11,6 +11,7 @@ import MapKit
 import CoreLocation
 import SnapKit
 import FirebaseDatabase
+import SVProgressHUD
 
 class MapViewController: UIViewController {
     
@@ -18,7 +19,7 @@ class MapViewController: UIViewController {
 
     var lastAnnotation: FootPrintAnnotation!
     
-    let regionInMeters: CLLocationDistance = 500
+    let regionInMeters: CLLocationDistance = 250
     
     var locationManager = CLLocationManager()
     var userLocated = false
@@ -76,8 +77,8 @@ class MapViewController: UIViewController {
         }
         
         
-        mapView.isZoomEnabled = false
-        mapView.isScrollEnabled = false
+        mapView.isZoomEnabled = true
+//        mapView.isScrollEnabled = false
         
     }
     
@@ -104,6 +105,43 @@ class MapViewController: UIViewController {
         }
     }
     
+    func getAnnotation() {
+        let group = DispatchGroup()
+        self.view.isUserInteractionEnabled = false
+        SVProgressHUD.show()
+        group.enter()
+        DispatchQueue.global().async { [weak self] in
+            self?.ref.child("footprintPosts").child(self!.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                if(!snapshot.exists()) {
+                    group.leave()
+                }
+                guard let value = (snapshot.value as? NSDictionary) else { return }
+                if(value != self?.lastData) {
+                    self?.lastData = value
+                    self?.mainData.fpaList = [FootPrintAnnotation]()
+                    for item in value.allValues {
+                        let it = item as! NSDictionary
+                        print(it)
+                        let cood = CLLocationCoordinate2D.init(latitude: Double(it["latitude"] as! String)! as CLLocationDegrees, longitude: Double(it["longitude"] as! String)! as CLLocationDegrees)
+                        print(cood)
+                        let title = it["name"] as? String
+                        let imageUrl = it["profileImageURL"] as? String
+                        let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!)
+                        print(item.title!)
+                        self?.mainData.fpaList?.append(item)
+                    }
+                }
+            group.leave()
+        }, withCancel: nil)
+            group.notify(queue: .main) {
+                print("load Done")
+                self?.view.isUserInteractionEnabled = true
+                self!.mapView.showAnnotations(self!.mainData.fpaList!, animated: true)
+                SVProgressHUD.dismiss()
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -115,38 +153,14 @@ class MapViewController: UIViewController {
         
         setupView()
         checkLocationAuthorization()
+        getAnnotation()
     }
     
     @objc func swipeUp(gesture: UIGestureRecognizer){
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
             if swipeGesture.direction == .up {
-                let group = DispatchGroup()
-                group.enter()
-                DispatchQueue.global().async {
-                    self.ref.child("users").child(self.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                        guard let value = (snapshot.value as? NSDictionary) else { return }
-                        if(value != self.lastData) {
-                            self.lastData = value
-                            self.mainData.fpaList = [FootPrintAnnotation]()
-                            for item in value.allValues {
-                                let it = item as! NSDictionary
-                                print(it)
-                                let cood = CLLocationCoordinate2D.init(latitude: Double(it["latitude"] as! String) as! CLLocationDegrees, longitude: Double(it["longitude"] as! String) as! CLLocationDegrees)
-                                print(cood)
-                                let title = it["name"] as? String
-                                let imageUrl = it["profileImageURL"] as? String
-                                let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!)
-                                print(item.title!)
-                                self.mainData.fpaList?.append(item)
-                            }
-                        }
-                        group.leave()
-                    }, withCancel: nil)
-                }
-                group.notify(queue: .main) {
-                    let view = self.storyboard?.instantiateViewController(withIdentifier: "AnnotationTableViewController") as! AnnotationTableViewController
-                    self.present(view, animated: true, completion: nil)
-                }
+                let view = self.storyboard?.instantiateViewController(withIdentifier: "AnnotationTableViewController") as! AnnotationTableViewController
+                self.present(view, animated: true, completion: nil)
             }
         }
     }
@@ -187,8 +201,9 @@ class MapViewController: UIViewController {
     @IBAction func unwindToMap(segue: UIStoryboardSegue) {
         if segue.identifier == "cancel" {
             print("cancel")
-        } else {
-            
+        } else if segue.identifier == "registerEnd" {
+            mapView.removeAnnotation(lastAnnotation)
+            getAnnotation()
         }
     }
 }
@@ -206,15 +221,11 @@ extension MapViewController: MKMapViewDelegate {
                 let currentAnnotation = annotation as! FootPrintAnnotation
                 let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: title)
                 
-                var flagImage = #imageLiteral(resourceName: "ExistFlag")
-                
+                let imageView = UIImageView.init(image: currentAnnotation.title == "New Post" ? #imageLiteral(resourceName: "FirstPrint") : #imageLiteral(resourceName: "MyPrint"))
                 if currentAnnotation.title == "New Post" {
-                    annotationView.isDraggable = true
-                    flagImage = #imageLiteral(resourceName: "ExistFlag")
+                    imageView.tintColor = #colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1)
                 }
-                
-                let imageView = UIImageView.init(image: flagImage)
-                imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 25, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 25, width: 50, height: 50)
+                imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
                 
                 annotationView.addSubview(imageView)
                 
@@ -245,6 +256,7 @@ extension MapViewController: CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         let region = MKCoordinateRegion.init(center: location.coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
         mapView.setRegion(region, animated: true)
+        locationManager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

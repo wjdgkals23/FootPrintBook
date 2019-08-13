@@ -14,10 +14,12 @@ class FootPrintAnnotation: NSObject, MKAnnotation {
     var title: String?
     var subtitle: String?
     var imageUrl: String?
+    var created: String?
     
     init(coordinate: CLLocationCoordinate2D, title: String, imageUrl: String?) {
         self.coordinate = coordinate
         self.title = title
         self.imageUrl = imageUrl
+        self.created = Date.init().description
     }
 }

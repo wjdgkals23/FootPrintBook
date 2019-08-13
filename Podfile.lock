@@ -116,6 +116,7 @@ PODS:
   - nanopb/encode (0.3.901)
   - Protobuf (3.9.0)
   - SnapKit (5.0.1)
+  - SVProgressHUD (2.2.5)
   - TextFieldEffects (1.6.0)
 
 DEPENDENCIES:
@@ -126,6 +127,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - GoogleSignIn
   - SnapKit (~> 5.0.0)
+  - SVProgressHUD
   - TextFieldEffects
 
 SPEC REPOS:
@@ -153,6 +155,7 @@ SPEC REPOS:
     - nanopb
     - Protobuf
     - SnapKit
+    - SVProgressHUD
     - TextFieldEffects
 
 SPEC CHECKSUMS:
@@ -179,8 +182,9 @@ SPEC CHECKSUMS:
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 1097ca58584c8d9be81bfbf2c5ff5975648dd87a
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   TextFieldEffects: 529b8aff706fb40f82c41c780c0777941a893796
 
-PODFILE CHECKSUM: a94f9214d647ff5853cc081a12d30a8b9fc3b447
+PODFILE CHECKSUM: 31b5f61124156a7375497bbade2318b84e8e2424
 
 COCOAPODS: 1.6.1

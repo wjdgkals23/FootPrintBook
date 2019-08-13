@@ -15,6 +15,7 @@ import FirebaseDatabase
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
+    var flag: Bool!
     var userInfo = UserInfo.shared
     
     var newAnnotation: FootPrintAnnotation!
@@ -157,7 +158,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
                                 self!.failRegister(message: "사진등록조회싪패")
                             }
                         } else {
-                            Database.database().reference().child("users").child(self!.userInfo.uid).childByAutoId().setValue(["name": self!.titleField.text, "profileImageURL": url?.absoluteString, "latitude": self!.latitudeTextField.text, "longitude": self!.longitudeTextField.text ] ) { (err, ref) in
+                            Database.database().reference().child("footprintPosts").child(self!.userInfo.uid).childByAutoId().setValue(["name": self!.titleField.text, "profileImageURL": url?.absoluteString, "latitude": self!.latitudeTextField.text, "longitude": self!.longitudeTextField.text ] ) { (err, ref) in
                                 if let error = err {
                                     DispatchQueue.main.async {
                                         self!.failRegister(message: "최종등록실패")
@@ -165,7 +166,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
                                     print(error)
                                 } else {
                                     DispatchQueue.main.async {
-                                        self!.dismiss(animated: true, completion: nil)
+                                        self!.performSegue(withIdentifier: "registerEnd", sender: self)
                                     }
                                 }
                             }
@@ -194,14 +195,18 @@ extension NewFootPrintViewController : UIImagePickerControllerDelegate {
             make.height.equalTo(height)
         }
         
+        self.addImageButton.image = image
+        
+        print(height)
+        print(self.contentView.frame.height)
+        
         self.contentView.snp.removeConstraints()
         self.contentView.snp.makeConstraints({ (make) in
             make.width.equalTo(self.scrollView)
-            make.height.equalTo(firstHeight + (firstHeight - height)/2).priority(.low)
+            make.height.equalTo(self.contentView.frame.height + height).priority(.low)
             make.top.left.right.bottom.equalTo(self.scrollView)
         })
         
-        self.addImageButton.image = image
         dismiss(animated: true, completion: nil)
     }
     
