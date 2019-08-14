@@ -12,6 +12,7 @@ import MapKit
 class FootPrintAnnotation: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var post: Post
+    
     var title: String? {
         return post.title
     }

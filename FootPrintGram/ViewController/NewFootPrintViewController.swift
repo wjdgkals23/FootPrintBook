@@ -12,11 +12,13 @@ import SnapKit
 import TextFieldEffects
 import FirebaseStorage
 import FirebaseDatabase
+import SVProgressHUD
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
     var flag: Bool!
     var userInfo = UserInfo.shared
+    var fireUtil = FireBaseUtil.shared
     
     var newAnnotation: FootPrintAnnotation!
     var postImage: Data!
@@ -142,34 +144,38 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         settingMeta.contentType = "image/jepg"
         let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
         let storage = Storage.storage().reference().child("userPostImage").child(userInfo.uid).child(self.titleField.text! + Date.init().description)
-    
+        SVProgressHUD.show()
         DispatchQueue.global().async {
-            [weak self] in storage.putData(uploadImage!, metadata: settingMeta) { (data,error) in
+            [unowned self] in storage.putData(uploadImage!, metadata: settingMeta) { (data,error) in
                 if let error = error {
                     print(error.localizedDescription)
                     DispatchQueue.main.async {
-                        self!.failRegister(message: "사진등록실패")
+                        self.failRegister(message: "사진등록실패")
                     }
                 } else {
                     storage.downloadURL(completion: { (url, error) in
                         if let error = error {
                             print(error.localizedDescription)
                             DispatchQueue.main.async {
-                                self!.failRegister(message: "사진등록조회싪패")
+                                self.failRegister(message: "사진등록조회싪패")
                             }
                         } else {
-                            Database.database().reference().child("footprintPosts").child(self!.userInfo.uid).childByAutoId().setValue(["name": self!.titleField.text, "profileImageURL": url?.absoluteString, "latitude": self!.latitudeTextField.text, "longitude": self!.longitudeTextField.text ] ) { (err, ref) in
+                            let data = ["name": self.titleField.text!, "profileImageURL": url!.absoluteString, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text! ]
+                            
+                            self.fireUtil.callPostUpdateWithLoadingUI(data: data, completion: { [unowned self] (err, ref) in
                                 if let error = err {
                                     DispatchQueue.main.async {
-                                        self!.failRegister(message: "최종등록실패")
+                                        self.failRegister(message: "최종등록실패")
                                     }
                                     print(error)
                                 } else {
                                     DispatchQueue.main.async {
-                                        self!.performSegue(withIdentifier: "registerEnd", sender: self)
+                                        self.performSegue(withIdentifier: "registerEnd", sender: self)
+                                        SVProgressHUD.dismiss()
                                     }
                                 }
                             }
+)
                         }
                     })
                 }
@@ -196,9 +202,6 @@ extension NewFootPrintViewController : UIImagePickerControllerDelegate {
         }
         
         self.addImageButton.image = image
-        
-        print(height)
-        print(self.contentView.frame.height)
         
         self.contentView.snp.removeConstraints()
         self.contentView.snp.makeConstraints({ (make) in

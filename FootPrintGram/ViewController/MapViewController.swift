@@ -35,7 +35,33 @@ class MapViewController: UIViewController {
     
     var annotationImageDict: [String:UIImage] = [String:UIImage]()
     
-    func setupView() {
+    
+    // MARK: - Override Func
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        // delegate setting
+        mapView.delegate = self
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        mainData = FootPrintAnnotationList.shared
+        
+        setupView()
+        checkLocationAuthorization()
+        getAnnotation()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "NewFootPrint" {
+            let destination = segue.destination as! NewFootPrintViewController
+            let senderAnnotation = sender as! FootPrintAnnotation
+            destination.newAnnotation = senderAnnotation
+        }
+    }
+    
+    // MARK: - Private Func
+    
+    private func setupView() {
         self.navigationController?.isNavigationBarHidden = true
         self.view.addSubview(mapView)
         
@@ -79,13 +105,12 @@ class MapViewController: UIViewController {
             make.width.height.equalTo(50)
         }
         
-        
         mapView.isZoomEnabled = true
-//        mapView.isScrollEnabled = false
+        mapView.isScrollEnabled = true
         
     }
     
-    func checkLocationAuthorization() {
+    private func checkLocationAuthorization() {
         switch CLLocationManager.authorizationStatus() {
         case .authorizedWhenInUse:
             mapView.showsUserLocation = true
@@ -108,42 +133,42 @@ class MapViewController: UIViewController {
         }
     }
     
-    func getAnnotation() {
+    private func getAnnotation() {
         let group = DispatchGroup()
         self.view.isUserInteractionEnabled = false
         SVProgressHUD.show()
         group.enter()
-        DispatchQueue.global().async { [weak self] in
-            self?.ref.child("footprintPosts").child(self!.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        DispatchQueue.global().async { [unowned self] in
+            self.ref.child("footprintPosts").child(self.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if(!snapshot.exists()) {
                     group.leave()
                 }
                 guard let value = (snapshot.value as? NSDictionary) else { return }
-                if(value != self?.lastData) {
-                    self?.lastData = value
-                    self?.mainData.fpaList = [FootPrintAnnotation]()
+                if(value != self.lastData) {
+                    self.lastData = value
+                    self.mainData.fpaList = [FootPrintAnnotation]()
                     for item in value.allValues {
                         let it = item as! NSDictionary
                         let cood = CLLocationCoordinate2D.init(latitude: Double(it["latitude"] as! String)! as CLLocationDegrees, longitude: Double(it["longitude"] as! String)! as CLLocationDegrees)
                         let title = it["name"] as? String
                         let imageUrl = it["profileImageURL"] as? String
                         let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!)
-                        self?.mainData.fpaList?.append(item)
+                        self.mainData.fpaList?.append(item)
                     }
-                    self!.loadImage()
+                    self.loadImage()
                 }
             group.leave()
         }, withCancel: nil)
             group.notify(queue: .main) {
                 print("load Done")
-                self?.view.isUserInteractionEnabled = true
-                self!.mapView.showAnnotations(self!.mainData.fpaList!, animated: true)
+                self.view.isUserInteractionEnabled = true
+                self.mapView.showAnnotations(self.mainData.fpaList!, animated: true)
                 SVProgressHUD.dismiss()
             }
         }
     }
     
-    func loadImage() {
+    private func loadImage() {
         for item in self.mainData.fpaList! {
             let url = URL.init(string: item.post.imageUrl!)
             let data = NSData.init(contentsOf: url!)
@@ -152,19 +177,7 @@ class MapViewController: UIViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        // delegate setting
-        mapView.delegate = self
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        mainData = FootPrintAnnotationList.shared
-        
-        setupView()
-        checkLocationAuthorization()
-        getAnnotation()
-    }
+    // MARK: - Gesture Func
     
     @objc func swipeUp(gesture: UIGestureRecognizer){
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
@@ -200,13 +213,7 @@ class MapViewController: UIViewController {
         mapView.setRegion(zoomRegion, animated: true)
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "NewFootPrint" {
-            let destination = segue.destination as! NewFootPrintViewController
-            let senderAnnotation = sender as! FootPrintAnnotation
-            destination.newAnnotation = senderAnnotation
-        }
-    }
+    // MARK: - Action Func
     
     @IBAction func unwindToMap(segue: UIStoryboardSegue) {
         if segue.identifier == "cancel" {
@@ -218,6 +225,8 @@ class MapViewController: UIViewController {
         }
     }
 }
+
+// MARK: - Delegate Func
 
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {

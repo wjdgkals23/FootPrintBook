@@ -22,6 +22,7 @@
 		F46881442300F6B20079F07B /* AnnotationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46881432300F6B20079F07B /* AnnotationTableViewController.swift */; };
 		F4688147230103EA0079F07B /* FootPrintAnnotationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */; };
 		F4688151230389190079F07B /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688150230389190079F07B /* Post.swift */; };
+		F46881582303FB4C0079F07B /* FireBaseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46881572303FB4C0079F07B /* FireBaseUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		F46881432300F6B20079F07B /* AnnotationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationTableViewController.swift; sourceTree = "<group>"; };
 		F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotationList.swift; sourceTree = "<group>"; };
 		F4688150230389190079F07B /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		F46881572303FB4C0079F07B /* FireBaseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +102,7 @@
 				9003454622F52F5C007573E3 /* Util */,
 				9003453E22F51671007573E3 /* ViewController */,
 				9003453C22F51655007573E3 /* Model */,
-				F4688145230103D00079F07B /* ViewModel */,
+				F4688145230103D00079F07B /* ListModel */,
 				9003453B22F51646007573E3 /* Storyboard */,
 				9003452822F51197007573E3 /* AppDelegate.swift */,
 				9003452F22F51198007573E3 /* Assets.xcassets */,
@@ -143,16 +145,17 @@
 			isa = PBXGroup;
 			children = (
 				9003454722F52F6C007573E3 /* MakeAlert.swift */,
+				F46881572303FB4C0079F07B /* FireBaseUtil.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
 		};
-		F4688145230103D00079F07B /* ViewModel */ = {
+		F4688145230103D00079F07B /* ListModel */ = {
 			isa = PBXGroup;
 			children = (
 				F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */,
 			);
-			path = ViewModel;
+			path = ListModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,6 +327,7 @@
 				F468810222FAA3D60079F07B /* UserInfo.swift in Sources */,
 				F46881442300F6B20079F07B /* AnnotationTableViewController.swift in Sources */,
 				9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */,
+				F46881582303FB4C0079F07B /* FireBaseUtil.swift in Sources */,
 				9003452922F51197007573E3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
