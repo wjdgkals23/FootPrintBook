@@ -21,7 +21,7 @@
 		F468810222FAA3D60079F07B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468810122FAA3D60079F07B /* UserInfo.swift */; };
 		F46881442300F6B20079F07B /* AnnotationTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46881432300F6B20079F07B /* AnnotationTableViewController.swift */; };
 		F4688147230103EA0079F07B /* FootPrintAnnotationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */; };
-		F468814F230257230079F07B /* FootPrintAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468814E230257230079F07B /* FootPrintAnnotationView.swift */; };
+		F4688151230389190079F07B /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688150230389190079F07B /* Post.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +43,7 @@
 		F468810122FAA3D60079F07B /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		F46881432300F6B20079F07B /* AnnotationTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationTableViewController.swift; sourceTree = "<group>"; };
 		F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotationList.swift; sourceTree = "<group>"; };
-		F468814E230257230079F07B /* FootPrintAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotationView.swift; sourceTree = "<group>"; };
+		F4688150230389190079F07B /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +123,7 @@
 			children = (
 				9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */,
 				F468810122FAA3D60079F07B /* UserInfo.swift */,
+				F4688150230389190079F07B /* Post.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -134,7 +135,6 @@
 				9003454922F67573007573E3 /* NewFootPrintViewController.swift */,
 				F46880F522F952D50079F07B /* LoginViewController.swift */,
 				F46881432300F6B20079F07B /* AnnotationTableViewController.swift */,
-				F468814E230257230079F07B /* FootPrintAnnotationView.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -316,6 +316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F46880F622F952D50079F07B /* LoginViewController.swift in Sources */,
+				F4688151230389190079F07B /* Post.swift in Sources */,
 				9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */,
 				9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */,
 				9003452B22F51197007573E3 /* MapViewController.swift in Sources */,
@@ -324,7 +325,6 @@
 				F46881442300F6B20079F07B /* AnnotationTableViewController.swift in Sources */,
 				9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */,
 				9003452922F51197007573E3 /* AppDelegate.swift in Sources */,
-				F468814F230257230079F07B /* FootPrintAnnotationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

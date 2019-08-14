@@ -11,6 +11,7 @@ import MapKit
 import CoreLocation
 import SnapKit
 import FirebaseDatabase
+import FirebaseStorage
 import SVProgressHUD
 
 class MapViewController: UIViewController {
@@ -31,6 +32,8 @@ class MapViewController: UIViewController {
     var lastData: NSDictionary!
     
     weak var alertManager = MakeAlert.shared
+    
+    var annotationImageDict: [String:UIImage] = [String:UIImage]()
     
     func setupView() {
         self.navigationController?.isNavigationBarHidden = true
@@ -121,15 +124,13 @@ class MapViewController: UIViewController {
                     self?.mainData.fpaList = [FootPrintAnnotation]()
                     for item in value.allValues {
                         let it = item as! NSDictionary
-                        print(it)
                         let cood = CLLocationCoordinate2D.init(latitude: Double(it["latitude"] as! String)! as CLLocationDegrees, longitude: Double(it["longitude"] as! String)! as CLLocationDegrees)
-                        print(cood)
                         let title = it["name"] as? String
                         let imageUrl = it["profileImageURL"] as? String
                         let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!)
-                        print(item.title!)
                         self?.mainData.fpaList?.append(item)
                     }
+                    self!.loadImage()
                 }
             group.leave()
         }, withCancel: nil)
@@ -139,6 +140,15 @@ class MapViewController: UIViewController {
                 self!.mapView.showAnnotations(self!.mainData.fpaList!, animated: true)
                 SVProgressHUD.dismiss()
             }
+        }
+    }
+    
+    func loadImage() {
+        for item in self.mainData.fpaList! {
+            let url = URL.init(string: item.post.imageUrl!)
+            let data = NSData.init(contentsOf: url!)
+            let image = UIImage(data: data! as Data)
+            self.annotationImageDict[item.post.title!] = image
         }
     }
     
@@ -203,6 +213,7 @@ class MapViewController: UIViewController {
             print("cancel")
         } else if segue.identifier == "registerEnd" {
             mapView.removeAnnotation(lastAnnotation)
+            lastAnnotation = nil
             getAnnotation()
         }
     }
@@ -210,9 +221,8 @@ class MapViewController: UIViewController {
 
 extension MapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        guard let title = annotation.title! else {
-            return nil
-        }
+        
+        guard let title = annotation.title! else { return nil }
         
         if (annotation is FootPrintAnnotation) {
             if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: title) {
@@ -220,25 +230,30 @@ extension MapViewController: MKMapViewDelegate {
             } else {
                 let currentAnnotation = annotation as! FootPrintAnnotation
                 let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: title)
-                
-                let imageView = UIImageView.init(image: currentAnnotation.imageUrl == nil ? #imageLiteral(resourceName: "FirstPrint") : #imageLiteral(resourceName: "MyPrint"))
-                if currentAnnotation.imageUrl == nil {
+                let imageView = UIImageView.init(image: currentAnnotation.post.imageUrl! == "@default" ? #imageLiteral(resourceName: "FirstPrint") : #imageLiteral(resourceName: "MyPrint"))
+                if currentAnnotation.post.imageUrl! == "@defalut" {
                     imageView.tintColor = #colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1)
                 }
                 imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
                 
                 annotationView.addSubview(imageView)
                 
+                let annoButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 40, height: 40))
+                annoButton.setImage(#imageLiteral(resourceName: "AddBtn"), for: .normal)
+
+                if(annotationImageDict[title] != nil) {
+                    annoButton.setImage(annotationImageDict[title], for: .normal)
+                }
+                
+                annotationView.rightCalloutAccessoryView = annoButton
+                
                 annotationView.isEnabled = true
                 annotationView.canShowCallout = true
                 
-                let detailDisclosure = UIButton(type: .detailDisclosure)
-                annotationView.rightCalloutAccessoryView = detailDisclosure
                 
                 return annotationView
             }
         }
-        
         return nil
     }
     

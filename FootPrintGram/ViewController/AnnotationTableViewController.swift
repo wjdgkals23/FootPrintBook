@@ -48,7 +48,7 @@ class AnnotationTableViewController: UITableViewController, UIGestureRecognizerD
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-        cell?.textLabel?.text = annotationList.fpaList![indexPath.row].title
+        cell?.textLabel?.text = annotationList.fpaList![indexPath.row].post.title
         cell?.backgroundColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
         return cell!
     }

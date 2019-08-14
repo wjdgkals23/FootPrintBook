@@ -141,7 +141,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         let settingMeta = StorageMetadata.init()
         settingMeta.contentType = "image/jepg"
         let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
-        let storage = Storage.storage().reference().child("userPostImage").child(userInfo.uid)
+        let storage = Storage.storage().reference().child("userPostImage").child(userInfo.uid).child(self.titleField.text! + Date.init().description)
     
         DispatchQueue.global().async {
             [weak self] in storage.putData(uploadImage!, metadata: settingMeta) { (data,error) in
