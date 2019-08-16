@@ -7,12 +7,13 @@ target 'FootPrintGram' do
 
   # Pods for FootPrintGram
 pod 'SnapKit', '~> 5.0.0'
-pod 'Firebase/Analytics'
+pod 'Firebase/Analytics', '6.6.0'
 pod 'Firebase/RemoteConfig'
 pod 'TextFieldEffects'
 pod 'Firebase/Database'
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
-pod 'GoogleSignIn'
+pod 'GoogleSignIn', '4.4.0'
 pod 'SVProgressHUD'
+pod "PromiseKit", "~> 6.8"
 end

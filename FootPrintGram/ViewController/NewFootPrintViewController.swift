@@ -13,6 +13,7 @@ import TextFieldEffects
 import FirebaseStorage
 import FirebaseDatabase
 import SVProgressHUD
+import PromiseKit
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
@@ -36,6 +37,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     
     var firstHeight: CGFloat!
     // MARK: - Life Cycle
+    var catchErr: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,14 +126,16 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     func failRegister(message: String) {
         let alert = UIAlertController(title: message, message: "재시도 해주세요", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
-            self.dismiss(animated: false, completion: {
-                [weak self] in
-                self?.performSegue(withIdentifier: "unwindToSignUpVC", sender: self)
-            })
+            self.dismiss(animated: false, completion: nil)
         }))
         self.present(alert, animated: true, completion: nil)
     }
-
+    
+    func errorHandle(_ err:Error) -> Void {
+        SVProgressHUD.dismiss()
+        catchErr = false
+        self.failRegister(message: "사진등록조회싪패" + err.localizedDescription)
+    }
     
     // MARK: - action
     
@@ -140,49 +144,20 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     }
     
     @objc func registerPost() {
-        let settingMeta = StorageMetadata.init()
-        settingMeta.contentType = "image/jepg"
-        let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
-        let storage = Storage.storage().reference().child("userPostImage").child(userInfo.uid).child(self.titleField.text! + Date.init().description)
         SVProgressHUD.show()
-        DispatchQueue.global().async {
-            [unowned self] in storage.putData(uploadImage!, metadata: settingMeta) { (data,error) in
-                if let error = error {
-                    print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        self.failRegister(message: "사진등록실패")
-                    }
-                } else {
-                    storage.downloadURL(completion: { (url, error) in
-                        if let error = error {
-                            print(error.localizedDescription)
-                            DispatchQueue.main.async {
-                                self.failRegister(message: "사진등록조회싪패")
-                            }
-                        } else {
-                            let data = ["name": self.titleField.text!, "profileImageURL": url!.absoluteString, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text! ]
-                            
-                            self.fireUtil.callPostUpdateWithLoadingUI(data: data, completion: { [unowned self] (err, ref) in
-                                if let error = err {
-                                    DispatchQueue.main.async {
-                                        self.failRegister(message: "최종등록실패")
-                                    }
-                                    print(error)
-                                } else {
-                                    DispatchQueue.main.async {
-                                        self.performSegue(withIdentifier: "registerEnd", sender: self)
-                                        SVProgressHUD.dismiss()
-                                    }
-                                }
-                            }
-)
-                        }
-                    })
+        catchErr = true
+        let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
+        let postData = ["name": self.titleField.text!, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text! ]
+        
+        fireUtil.totalFunc(titleField.text!, uploadImage!, data2: postData).done{ result in
+            if(self.catchErr) {
+                DispatchQueue.main.async {
+                    SVProgressHUD.dismiss()
+                    self.performSegue(withIdentifier: "registerEnd", sender: self)
                 }
             }
-        }
+        }.catch{ err in self.errorHandle(err) }
     }
-    
 }
 
 // MARK: - Delegate
