@@ -23,6 +23,7 @@
 		F4688147230103EA0079F07B /* FootPrintAnnotationList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */; };
 		F4688151230389190079F07B /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688150230389190079F07B /* Post.swift */; };
 		F46881582303FB4C0079F07B /* FireBaseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46881572303FB4C0079F07B /* FireBaseUtil.swift */; };
+		F468815D230A3CB30079F07B /* FootPrintTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468815C230A3CB30079F07B /* FootPrintTableCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotationList.swift; sourceTree = "<group>"; };
 		F4688150230389190079F07B /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		F46881572303FB4C0079F07B /* FireBaseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseUtil.swift; sourceTree = "<group>"; };
+		F468815C230A3CB30079F07B /* FootPrintTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintTableCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		9003452722F51197007573E3 /* FootPrintGram */ = {
 			isa = PBXGroup;
 			children = (
+				F468815B230A3C2E0079F07B /* Cell */,
 				F46880FB22F961B70079F07B /* GoogleService-Info.plist */,
 				9003454622F52F5C007573E3 /* Util */,
 				9003453E22F51671007573E3 /* ViewController */,
@@ -156,6 +159,14 @@
 				F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */,
 			);
 			path = ListModel;
+			sourceTree = "<group>";
+		};
+		F468815B230A3C2E0079F07B /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				F468815C230A3CB30079F07B /* FootPrintTableCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -320,6 +331,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F468815D230A3CB30079F07B /* FootPrintTableCell.swift in Sources */,
 				F46880F622F952D50079F07B /* LoginViewController.swift in Sources */,
 				F4688151230389190079F07B /* Post.swift in Sources */,
 				9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */,

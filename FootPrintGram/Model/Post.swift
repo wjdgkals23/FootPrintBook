@@ -18,4 +18,5 @@ class Post {
         self.imageUrl = imageUrl
         self.created = created
     }
+    
 }

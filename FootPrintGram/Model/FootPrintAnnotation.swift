@@ -12,20 +12,25 @@ import MapKit
 class FootPrintAnnotation: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
     var post: Post
+    var id: String?
     
     var title: String? {
         return post.title
     }
     var subtitle: String? {
-        return nil
+        return post.created?.description
     }
     
-    init(coordinate: CLLocationCoordinate2D, title: String, imageUrl: String?) {
+    init(coordinate: CLLocationCoordinate2D, title: String, imageUrl: String?, created: String?, id: String?) {
         self.coordinate = coordinate
-        if let imageString = imageUrl {
-            self.post = Post.init(title: title, imageUrl: imageString, created: Date.init().description)
+        self.id = id
+        if let imageString = imageUrl, let createdString = created {
+            self.post = Post.init(title: title, imageUrl: imageString, created: createdString)
         } else {
-            self.post = Post.init(title: title, imageUrl: "@default", created: Date.init().description)
+            let dateFormatter = DateFormatter.init()
+            dateFormatter.dateFormat = "yyyy-MM-dd, HH:mm"
+            let result = dateFormatter.string(from: Date())
+            self.post = Post.init(title: title, imageUrl: "@default", created: result)
         }
     }
 }

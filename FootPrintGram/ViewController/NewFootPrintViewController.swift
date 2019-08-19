@@ -10,10 +10,7 @@ import Foundation
 import UIKit
 import SnapKit
 import TextFieldEffects
-import FirebaseStorage
-import FirebaseDatabase
 import SVProgressHUD
-import PromiseKit
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
@@ -36,9 +33,9 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     var contentView = UIView()
     
     var firstHeight: CGFloat!
-    // MARK: - Life Cycle
-    var catchErr: Bool = false
     
+    
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         print(newAnnotation.coordinate.latitude)
@@ -123,17 +120,8 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         }
     }
     
-    func failRegister(message: String) {
-        let alert = UIAlertController(title: message, message: "재시도 해주세요", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
-            self.dismiss(animated: false, completion: nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
-    
     func errorHandle(_ err:Error) -> Void {
         SVProgressHUD.dismiss()
-        catchErr = false
         self.failRegister(message: "사진등록조회싪패" + err.localizedDescription)
     }
     
@@ -145,18 +133,17 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     
     @objc func registerPost() {
         SVProgressHUD.show()
-        catchErr = true
         let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
-        let postData = ["name": self.titleField.text!, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text! ]
-        
-        fireUtil.totalFunc(titleField.text!, uploadImage!, data2: postData).done{ result in
-            if(self.catchErr) {
+        let postData = ["name": self.titleField.text!, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text!, "created": self.newAnnotation.post.created!]
+        let title = self.titleField.text!
+        DispatchQueue.global().async { [unowned self] in
+            self.fireUtil.totalFunc(title, uploadImage!, data2: postData).done{ result in
                 DispatchQueue.main.async {
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "registerEnd", sender: self)
                 }
-            }
-        }.catch{ err in self.errorHandle(err) }
+            }.catch{ err in self.errorHandle(err) }
+        }
     }
 }
 

@@ -12,23 +12,16 @@ import FirebaseDatabase
 class AnnotationTableViewController: UITableViewController, UIGestureRecognizerDelegate {
     
     var annotationList: FootPrintAnnotationList!
+    var selected: FootPrintAnnotation!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.tableView.isUserInteractionEnabled = true
-        let tapGR = UITapGestureRecognizer(target: self, action: #selector(AnnotationTableViewController.handleTap(_:)))
-        tapGR.delegate = self
-        tapGR.numberOfTapsRequired = 2
-        self.view.addGestureRecognizer(tapGR)
-        print("tableView")
+        let slideDownAction = UISwipeGestureRecognizer.init(target: self, action: #selector(swipeDown))
+        slideDownAction.direction = .down
+        self.view.addGestureRecognizer(slideDownAction)
         
         annotationList = FootPrintAnnotationList.shared
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
@@ -48,13 +41,48 @@ class AnnotationTableViewController: UITableViewController, UIGestureRecognizerD
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
-        cell?.textLabel?.text = annotationList.fpaList![indexPath.row].post.title
-        cell?.backgroundColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
-        return cell!
+        let customcell = cell as! FootPrintTableCell
+        customcell.title.text = annotationList.fpaList![indexPath.row].post.title
+        customcell.date.text = annotationList.fpaList![indexPath.row].post.created
+        return customcell
     }
     
-    @objc func handleTap(_ gesture: UITapGestureRecognizer){
-        dismiss(animated: true, completion: nil)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selected = annotationList.fpaList![indexPath.row]
+        for item in self.navigationController!.viewControllers {
+            if item is MapViewController {
+                let mapView = item as! MapViewController
+                mapView.selectedAnnotation = selected
+            }
+        }
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            print("delete")
+            print(annotationList.fpaList![indexPath.row].id!)
+            FireBaseUtil.shared.deleteTotalFunc(indexPath.row, annotationList.fpaList![indexPath.row].id!).done { (result) in
+                for item in self.navigationController!.viewControllers {
+                    if item is MapViewController {
+                        let mapView = item as! MapViewController
+                        mapView.signalStr = "Delete"
+                    }
+                }
+                self.navigationController?.popViewController(animated: true)
+                }.catch { (err) in
+                    self.failRegister(message: "삭제로딩실패")
+            }
+        }
+    }
+    
+    
+    @objc func swipeDown(gesture: UIGestureRecognizer){
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            if swipeGesture.direction == .down {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
     }
 
     /*

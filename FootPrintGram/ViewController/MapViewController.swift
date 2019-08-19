@@ -17,8 +17,9 @@ import SVProgressHUD
 class MapViewController: UIViewController {
     
     var mapView: MKMapView! = MKMapView()
-
+    
     var lastAnnotation: FootPrintAnnotation!
+    var selectedAnnotation: FootPrintAnnotation!
     
     let regionInMeters: CLLocationDistance = 250
     
@@ -30,6 +31,7 @@ class MapViewController: UIViewController {
     var ref = Database.database().reference()
     
     var lastData: NSDictionary!
+    var signalStr: String!
     
     weak var alertManager = MakeAlert.shared
     
@@ -44,11 +46,23 @@ class MapViewController: UIViewController {
         mapView.delegate = self
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        mainData = FootPrintAnnotationList.shared
         
         setupView()
         checkLocationAuthorization()
         getAnnotation()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if(signalStr == "Delete") {
+            mapView.removeAnnotations(self.mainData.fpaList!)
+            getAnnotation()
+            signalStr = ""
+            return
+        }
+        guard let willAnnotation = selectedAnnotation else { return }
+
+        let region = MKCoordinateRegion.init(center: willAnnotation.coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+        mapView.setRegion(region, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -60,6 +74,32 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - Private Func
+    private func makePhotoView(anno: FootPrintAnnotation) -> UIView {
+        let title = anno.title!
+        let target = annotationImageDict[title]!
+        let ratio = target.size.height/target.size.width
+        let height = (self.view.frame.width/3)*ratio
+        let resizedImage = UIImage.resize(image: target, targetSize: CGSize.init(width: self.view.frame.width/3, height: height))
+        
+        let initView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.width/3 + 30, height: height + 30))
+        let label = UILabel.init()
+        let text = NSMutableAttributedString.init(string: anno.post.created!)
+        let font = UIFont.boldSystemFont(ofSize: 15)
+        text.addAttribute(kCTFontAttributeName as NSAttributedString.Key, value: font, range: (anno.post.created! as NSString).range(of: anno.post.created!))
+        label.attributedText = text
+        initView.addSubview(label)
+        label.snp.makeConstraints { (make) in
+            make.bottom.left.right.equalTo(initView)
+            make.height.equalTo(20)
+        }
+        let imageView = UIImageView.init(image: resizedImage)
+        initView.addSubview(imageView)
+        imageView.snp.makeConstraints { (make) in
+            make.bottom.equalTo(label.snp.top)
+            make.left.right.top.equalTo(initView)
+        }
+        return initView
+    }
     
     private func setupView() {
         self.navigationController?.isNavigationBarHidden = true
@@ -139,32 +179,28 @@ class MapViewController: UIViewController {
         SVProgressHUD.show()
         group.enter()
         DispatchQueue.global().async { [unowned self] in
-            self.ref.child("footprintPosts").child(self.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                if(!snapshot.exists()) {
+            FireBaseUtil.shared.callAllPostWithLoadingUI().done({ (result) in
+                self.mainData = FootPrintAnnotationList.shared
+                if(result == "SUC") {
+                    self.loadImage()
+                    group.leave()
+                } else {
+                    self.signalStr = "NotExist"
                     group.leave()
                 }
-                guard let value = (snapshot.value as? NSDictionary) else { return }
-                if(value != self.lastData) {
-                    self.lastData = value
-                    self.mainData.fpaList = [FootPrintAnnotation]()
-                    for item in value.allValues {
-                        let it = item as! NSDictionary
-                        let cood = CLLocationCoordinate2D.init(latitude: Double(it["latitude"] as! String)! as CLLocationDegrees, longitude: Double(it["longitude"] as! String)! as CLLocationDegrees)
-                        let title = it["name"] as? String
-                        let imageUrl = it["profileImageURL"] as? String
-                        let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!)
-                        self.mainData.fpaList?.append(item)
-                    }
-                    self.loadImage()
-                }
-            group.leave()
-        }, withCancel: nil)
-            group.notify(queue: .main) {
-                print("load Done")
-                self.view.isUserInteractionEnabled = true
-                self.mapView.showAnnotations(self.mainData.fpaList!, animated: true)
-                SVProgressHUD.dismiss()
+            }).catch({ (err) in
+                self.failRegister(message: err.localizedDescription)
+            })
+        }
+        group.notify(queue: .main) {
+            print("load Done")
+            self.view.isUserInteractionEnabled = true
+            if(self.signalStr == "NotExist") {
+                self.mainData.fpaList = []
             }
+            self.signalStr = ""
+            self.mapView.showAnnotations(self.mainData.fpaList!, animated: true)
+            SVProgressHUD.dismiss()
         }
     }
     
@@ -183,7 +219,7 @@ class MapViewController: UIViewController {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
             if swipeGesture.direction == .up {
                 let view = self.storyboard?.instantiateViewController(withIdentifier: "AnnotationTableViewController") as! AnnotationTableViewController
-                self.present(view, animated: true, completion: nil)
+                self.navigationController?.pushViewController(view, animated: true)
             }
         }
     }
@@ -193,7 +229,7 @@ class MapViewController: UIViewController {
         if lastAnnotation != nil {
             alertManager?.makeOneActionAlert(target: self, title: "Annotation already dropped", message: "There is an annotation on screen. Tap the Map If you want Remove Annotation", dismiss: true)
         } else {
-            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Post", imageUrl: nil)
+            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Post", imageUrl: nil, created: nil, id: nil)
             self.mapView.addAnnotation(lastAnnotation)
         }
     }
@@ -220,8 +256,11 @@ class MapViewController: UIViewController {
             print("cancel")
         } else if segue.identifier == "registerEnd" {
             mapView.removeAnnotation(lastAnnotation)
+            mapView.removeAnnotations(self.mainData.fpaList!)
             lastAnnotation = nil
             getAnnotation()
+        } else if segue.identifier == "showAnnotation" {
+            
         }
     }
 }
@@ -247,18 +286,16 @@ extension MapViewController: MKMapViewDelegate {
                 
                 annotationView.addSubview(imageView)
                 
-                let annoButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 40, height: 40))
-                annoButton.setImage(#imageLiteral(resourceName: "AddBtn"), for: .normal)
-
                 if(annotationImageDict[title] != nil) {
-                    annoButton.setImage(annotationImageDict[title], for: .normal)
+                    annotationView.detailCalloutAccessoryView = makePhotoView(anno: currentAnnotation)
+                } else {
+                    let annoButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 40, height: 40))
+                    annoButton.setImage(#imageLiteral(resourceName: "AddBtn"), for: .normal)
+                    annotationView.rightCalloutAccessoryView = annoButton
                 }
-                
-                annotationView.rightCalloutAccessoryView = annoButton
                 
                 annotationView.isEnabled = true
                 annotationView.canShowCallout = true
-                
                 
                 return annotationView
             }
@@ -285,5 +322,40 @@ extension MapViewController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         checkLocationAuthorization()
+    }
+}
+
+extension UIImage {
+    class func resize(image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        
+        let widthRatio  = targetSize.width  / image.size.width
+        let heightRatio = targetSize.height / image.size.height
+        
+        var newSize: CGSize
+        if widthRatio > heightRatio {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+        
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
+}
+
+extension UIViewController {
+    func failRegister(message: String) {
+        let alert = UIAlertController(title: message, message: "재시도 해주세요", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
+            self.dismiss(animated: false, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }
