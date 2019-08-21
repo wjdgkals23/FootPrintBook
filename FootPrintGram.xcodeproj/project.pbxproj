@@ -16,6 +16,7 @@
 		9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454722F52F6C007573E3 /* MakeAlert.swift */; };
 		9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454922F67573007573E3 /* NewFootPrintViewController.swift */; };
 		CB7EF006F5353923CCE4C6C4 /* Pods_FootPrintGram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70AFDB11794D64BE7FBC6C2E /* Pods_FootPrintGram.framework */; };
+		F41165E3230CD29100A7339C /* DevideSimulReal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41165E2230CD29100A7339C /* DevideSimulReal.swift */; };
 		F46880F622F952D50079F07B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46880F522F952D50079F07B /* LoginViewController.swift */; };
 		F46880FC22F961B70079F07B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F46880FB22F961B70079F07B /* GoogleService-Info.plist */; };
 		F468810222FAA3D60079F07B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468810122FAA3D60079F07B /* UserInfo.swift */; };
@@ -40,6 +41,7 @@
 		9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotation.swift; sourceTree = "<group>"; };
 		9003454722F52F6C007573E3 /* MakeAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAlert.swift; sourceTree = "<group>"; };
 		9003454922F67573007573E3 /* NewFootPrintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFootPrintViewController.swift; sourceTree = "<group>"; };
+		F41165E2230CD29100A7339C /* DevideSimulReal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevideSimulReal.swift; sourceTree = "<group>"; };
 		F46880F522F952D50079F07B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F46880FB22F961B70079F07B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F468810122FAA3D60079F07B /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			children = (
 				9003454722F52F6C007573E3 /* MakeAlert.swift */,
 				F46881572303FB4C0079F07B /* FireBaseUtil.swift */,
+				F41165E2230CD29100A7339C /* DevideSimulReal.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				F468815D230A3CB30079F07B /* FootPrintTableCell.swift in Sources */,
 				F46880F622F952D50079F07B /* LoginViewController.swift in Sources */,
 				F4688151230389190079F07B /* Post.swift in Sources */,
+				F41165E3230CD29100A7339C /* DevideSimulReal.swift in Sources */,
 				9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */,
 				9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */,
 				9003452B22F51197007573E3 /* MapViewController.swift in Sources */,
@@ -499,6 +503,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hm.FootPrintGram;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				"SWIFT_ACTIVE_COMPILATION_CONDITIONS[sdk=iphonesimulator*]" = SIMULATOR;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

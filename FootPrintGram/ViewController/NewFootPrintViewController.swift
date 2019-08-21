@@ -179,8 +179,11 @@ extension NewFootPrintViewController : UIImagePickerControllerDelegate {
         let imagePickerView = UIImagePickerController()
         imagePickerView.delegate = self
         imagePickerView.allowsEditing = true
-        imagePickerView.sourceType = .photoLibrary
-        
+        if Platform.isSimulator {
+            imagePickerView.sourceType = .photoLibrary
+        } else {
+            imagePickerView.sourceType = .camera
+        }
         self.present(imagePickerView, animated: true, completion: nil)
     }
     
