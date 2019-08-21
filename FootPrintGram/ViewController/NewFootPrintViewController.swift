@@ -120,11 +120,6 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         }
     }
     
-    func errorHandle(_ err:Error) -> Void {
-        SVProgressHUD.dismiss()
-        self.failRegister(message: "사진등록조회싪패" + err.localizedDescription)
-    }
-    
     // MARK: - action
     
     @objc func cancel() {
@@ -142,7 +137,10 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "registerEnd", sender: self)
                 }
-            }.catch{ err in self.errorHandle(err) }
+            }.catch{ err in
+                SVProgressHUD.dismiss()
+                self.failRegister(message: err.localizedDescription)
+            }
         }
     }
 }
