@@ -116,12 +116,8 @@
                             <outlet property="delegate" destination="rUv-b5-mPB" id="NcX-64-os6"/>
                         </connections>
                     </tableView>
-                    <connections>
-                        <segue destination="M9v-Ms-AM9" kind="unwind" identifier="showAnnotation" unwindAction="unwindToMapWithSegue:" id="Tdl-If-LIH"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sMP-Ae-TT8" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="M9v-Ms-AM9" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1738" y="9"/>
         </scene>

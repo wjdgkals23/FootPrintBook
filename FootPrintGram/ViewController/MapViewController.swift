@@ -243,7 +243,7 @@ class MapViewController: UIViewController {
         }
     }
     
-    @objc func centerToUsersLocation() {
+    func centerToUsersLocation() {
         let center = mapView.userLocation.coordinate
         let zoomRegion: MKCoordinateRegion = MKCoordinateRegion(center: center, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
         mapView.setRegion(zoomRegion, animated: true)
@@ -259,8 +259,6 @@ class MapViewController: UIViewController {
             mapView.removeAnnotations(self.mainData.fpaList!)
             lastAnnotation = nil
             getAnnotation()
-        } else if segue.identifier == "showAnnotation" {
-            
         }
     }
 }
