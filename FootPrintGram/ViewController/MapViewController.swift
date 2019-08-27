@@ -347,13 +347,3 @@ extension UIImage {
         return newImage!
     }
 }
-
-extension UIViewController {
-    func failRegister(message: String) {
-        let alert = UIAlertController(title: message, message: "재시도 해주세요", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { (action) in
-            self.dismiss(animated: false, completion: nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
-    }
-}

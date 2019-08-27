@@ -65,7 +65,8 @@ class FireBaseUtil {
         var temp_data = data
         temp_data["profileImageURL"] = url
         let r_data = (temp_data as NSDictionary)
-        return Promise<String> { scene -> Void in        Database.database().reference().child("footprintPosts").child(self.userInfo.uid).childByAutoId().setValue(r_data, withCompletionBlock: { (err, ref) in
+        return Promise<String> { scene -> Void in
+            Database.database().reference().child("footprintPosts").child(self.userInfo.uid).childByAutoId().setValue(r_data, withCompletionBlock: { (err, ref) in
                 guard let error = err else { return scene.fulfill("SUC") }
                 return scene.reject(error)
             })

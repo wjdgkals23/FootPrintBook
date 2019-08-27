@@ -25,6 +25,7 @@
 		F4688151230389190079F07B /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688150230389190079F07B /* Post.swift */; };
 		F46881582303FB4C0079F07B /* FireBaseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46881572303FB4C0079F07B /* FireBaseUtil.swift */; };
 		F468815D230A3CB30079F07B /* FootPrintTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468815C230A3CB30079F07B /* FootPrintTableCell.swift */; };
+		F4DBF36D2314ECF1002EB9E5 /* UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBF36C2314ECF1002EB9E5 /* UIViewControllerExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		F4688150230389190079F07B /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		F46881572303FB4C0079F07B /* FireBaseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseUtil.swift; sourceTree = "<group>"; };
 		F468815C230A3CB30079F07B /* FootPrintTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintTableCell.swift; sourceTree = "<group>"; };
+		F4DBF36C2314ECF1002EB9E5 /* UIViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +144,7 @@
 				9003454922F67573007573E3 /* NewFootPrintViewController.swift */,
 				F46880F522F952D50079F07B /* LoginViewController.swift */,
 				F46881432300F6B20079F07B /* AnnotationTableViewController.swift */,
+				F4DBF36C2314ECF1002EB9E5 /* UIViewControllerExtension.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 				F46881442300F6B20079F07B /* AnnotationTableViewController.swift in Sources */,
 				9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */,
 				F46881582303FB4C0079F07B /* FireBaseUtil.swift in Sources */,
+				F4DBF36D2314ECF1002EB9E5 /* UIViewControllerExtension.swift in Sources */,
 				9003452922F51197007573E3 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
