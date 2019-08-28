@@ -207,8 +207,13 @@ class MapViewController: UIViewController {
     private func loadImage() {
         for item in self.mainData.fpaList! {
             let url = URL.init(string: item.post.imageUrl!)
-            let data = NSData.init(contentsOf: url!)
-            let image = UIImage(data: data! as Data)
+            var image: UIImage!
+            guard let data = NSData.init(contentsOf: url!) else {
+                image = #imageLiteral(resourceName: "AddImage")
+                self.annotationImageDict[item.post.title!] = image
+                return
+            }
+            image = UIImage(data: data as Data)
             self.annotationImageDict[item.post.title!] = image
         }
     }

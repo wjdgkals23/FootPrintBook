@@ -99,8 +99,16 @@ class FireBaseUtil {
         return Promise<String> { scene -> Void in
             let deleteStorage = Storage.storage().reference(forURL: self.mainData.fpaList![ind].post.imageUrl!)
             deleteStorage.delete(completion: { (err) in
-                guard let err = err else { return scene.fulfill("SUC") }
-                return scene.reject(err)
+                guard let errorCode = (err as NSError?)?.code else { return scene.fulfill("SUC") }
+                guard let error = StorageErrorCode(rawValue: errorCode) else { return }
+                switch error {
+                case .objectNotFound:
+                    print("Not Found");
+                    return scene.fulfill("SUC")
+                @unknown default:
+                    print("Not")
+                    return scene.reject(errorCode as! Error)
+                }
             })
         }
     }
