@@ -12,7 +12,7 @@ import FirebaseDatabase
 import FirebaseAuth
 import MapKit
 import PromiseKit
-
+import RxSwift
 
 class FireBaseUtil {
     
@@ -61,40 +61,6 @@ class FireBaseUtil {
         }
     }
     
-    private func callPostUpdateWithLoadingUI(data: [String:String], url: String) -> Promise<String> {
-        var temp_data = data
-        temp_data["profileImageURL"] = url
-        let r_data = (temp_data as NSDictionary)
-        return Promise<String> { scene -> Void in
-            Database.database().reference().child("footprintPosts").child(self.userInfo.uid).childByAutoId().setValue(r_data, withCompletionBlock: { (err, ref) in
-                guard let error = err else { return scene.fulfill("SUC") }
-                return scene.reject(error)
-            })
-        }
-    }
-    
-    private func callPhotoPut(_ title: String, _ data: Data) -> Promise<String> {
-        settingMeta.contentType = "image/jepg"
-        let r_storage = storage.child(userInfo.uid).child(title + Date.init().description)
-        recentStorage = r_storage
-        return Promise<String> { scene -> Void in
-            r_storage.putData(data, metadata: settingMeta, completion: { (ref, err) in
-                guard let err = err else { return scene.fulfill("SUC") }
-                return scene.reject(err)
-            })
-        }
-    }
-    
-    private func callPhotoDownUrl() -> Promise<String> {
-        return Promise<String> { scene -> Void in
-            guard let rStorage = recentStorage else { return scene.reject(tempError.one) }
-            rStorage.downloadURL(completion: { (url, err) in
-                guard let err = err else { return scene.fulfill(url!.absoluteString) }
-                return scene.reject(err)
-            })
-        }
-    }
-    
     private func callDeleteById(_ ind: Int, _ id: String) -> Promise<String> {
         return Promise<String> { scene -> Void in
             let deleteStorage = Storage.storage().reference(forURL: self.mainData.fpaList![ind].post.imageUrl!)
@@ -121,14 +87,6 @@ class FireBaseUtil {
         }
     }
     
-    func totalFunc(_ title: String, _ data: Data, data2: [String:String]) -> Promise<String> {
-        return callPhotoPut(title, data).then {
-                _ in self.callPhotoDownUrl()
-            }.then {
-                url in self.callPostUpdateWithLoadingUI(data: data2, url: url)
-            }
-    }
-    
     func deleteTotalFunc(_ ind: Int,_ id: String) -> Promise<String> {
         return callDeleteById(ind, id).then{
             _ in self.callDeleteDBById(id)
@@ -139,6 +97,73 @@ class FireBaseUtil {
         case one
         case two
         case three
+    }
+    
+}
+
+extension FireBaseUtil {
+    
+    func fbAllPostLoad(_ title: String, _ data: Data, completed: @escaping (DataSnapshot?) -> Void, cancel: @escaping (Error) -> Void) {
+        DispatchQueue.global().async {
+            self.ref.child("footprintPosts").child(self.userInfo.uid).observeSingleEvent(of: .value, with: completed, withCancel: cancel)
+        }
+    }
+    
+    func fbUploadData(data: [String:String], url: String, completed: @escaping (Error?, DatabaseReference?) -> Void) {
+        var temp_data = data
+        temp_data["profileImageURL"] = url
+        let r_data = (temp_data as NSDictionary)
+        DispatchQueue.global().async {
+            Database.database().reference().child("footprintPosts").child(self.userInfo.uid).childByAutoId().setValue(r_data, withCompletionBlock: completed)
+        }
+    }
+    
+    func rxUploadData(data: [String:String], url: String) -> Observable<Bool?> {
+        return Observable.create { seal in
+            self.fbUploadData(data: data, url: url) { (err, ref) in
+                guard let ref = ref else { return seal.onError(err!) }
+                seal.onNext(true)
+                seal.onCompleted()
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func fbUploadImage(_ title: String, _ data: Data, completed: @escaping (StorageMetadata?, Error?) -> Void) {
+        settingMeta.contentType = "image/jepg"
+        let r_storage = storage.child(userInfo.uid).child(title + Date.init().description)
+        recentStorage = r_storage
+        
+        DispatchQueue.global().async {
+            r_storage.putData(data, metadata: self.settingMeta, completion: completed)
+        }
+    }
+    
+    func rxUploadImage(_ title: String, _ data: Data) -> Observable<Bool?> {
+        return Observable.create { seal in
+            self.fbUploadImage(title, data) { smeta, err in
+                guard let smeta = smeta else { return seal.onError(err!) }
+                seal.onNext(true)
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func fbGetImageUrl(completed: @escaping (URL?, Error?) -> Void) {
+        guard let rStorage = recentStorage else { return }
+        DispatchQueue.global().async {
+            rStorage.downloadURL(completion: completed)
+        }
+    }
+    
+    func rxGetImageUrl() -> Observable<String?> {
+        return Observable.create { seal in
+            self.fbGetImageUrl(){ url, err in
+                guard let url = url else { return seal.onError(err!) }
+                seal.onNext(url.absoluteString)
+            }
+            return Disposables.create()
+        }
     }
     
 }
