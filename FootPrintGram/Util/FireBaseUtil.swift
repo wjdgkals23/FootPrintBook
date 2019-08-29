@@ -94,18 +94,33 @@ class FireBaseUtil {
     }
     
     enum tempError: Error { // 전역화
-        case one
-        case two
-        case three
+        case NotExist
+        case CastingError
+        case UnwrappedError
     }
     
 }
 
 extension FireBaseUtil {
     
-    func fbAllPostLoad(_ title: String, _ data: Data, completed: @escaping (DataSnapshot?) -> Void, cancel: @escaping (Error) -> Void) {
+    func fbAllPostLoad(completed: @escaping (DataSnapshot?) -> Void, cancel: ((Error) -> Void)?) {
         DispatchQueue.global().async {
             self.ref.child("footprintPosts").child(self.userInfo.uid).observeSingleEvent(of: .value, with: completed, withCancel: cancel)
+        }
+    }
+    
+    func rxAllPostLoad() -> Observable<NSEnumerator> {
+        return Observable.create { seal in
+            self.fbAllPostLoad(completed: { (snapshot) in
+                guard let snapshot = snapshot else { return seal.onError(tempError.UnwrappedError) }
+                
+                if(!snapshot.exists()) {
+                    seal.onError(tempError.NotExist)
+                }
+                
+                seal.onNext(snapshot.children)
+            }, cancel: nil)
+            return Disposables.create()
         }
     }
     

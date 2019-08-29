@@ -12,6 +12,7 @@ import SnapKit
 import TextFieldEffects
 import SVProgressHUD
 import RxSwift
+import RxCocoa
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
@@ -140,6 +141,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         
         uploadImageOb.flatMapLatest{ b in downLoadUrlOb}
             .flatMapLatest{ url in self.fireUtil.rxUploadData(data: postData, url: url!) }
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: { result in
                 if result! {
                     SVProgressHUD.dismiss()
