@@ -13,6 +13,7 @@ import SnapKit
 import FirebaseDatabase
 import FirebaseStorage
 import SVProgressHUD
+import RxSwift
 
 class MapViewController: UIViewController {
     
@@ -35,6 +36,7 @@ class MapViewController: UIViewController {
     
     weak var alertManager = MakeAlert.shared
     
+    var disposeBag = DisposeBag()
     var annotationImageDict: [String:UIImage] = [String:UIImage]()
     
     
@@ -178,20 +180,18 @@ class MapViewController: UIViewController {
         self.view.isUserInteractionEnabled = false
         SVProgressHUD.show()
         group.enter()
-        DispatchQueue.global().async { [unowned self] in
-            FireBaseUtil.shared.callAllPostWithLoadingUI().done({ (result) in
+        
+        FireBaseUtil.shared.rxAllPostLoad()
+            .subscribe(onNext: { snap in
                 self.mainData = FootPrintAnnotationList.shared
-                if(result == "SUC") {
-                    self.loadImage()
-                    group.leave()
-                } else {
-                    self.signalStr = "NotExist"
-                    group.leave()
-                }
-            }).catch({ (err) in
+                self.loadImage()
+                group.leave()
+            }, onError: { err in
+                SVProgressHUD.dismiss()
                 self.failRegister(message: err.localizedDescription)
             })
-        }
+        .disposed(by: disposeBag)
+        
         group.notify(queue: .main) {
             print("load Done")
             self.view.isUserInteractionEnabled = true

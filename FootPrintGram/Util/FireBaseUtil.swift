@@ -23,47 +23,16 @@ class FireBaseUtil {
     let settingMeta = StorageMetadata.init()
     let storage = Storage.storage().reference().child("userPostImage")
     
-    var mainData: FootPrintAnnotationList!
     var ref = Database.database().reference()
     
     var lastData: NSDictionary!
     
     var recentStorage: StorageReference!
     
-    func callAllPostWithLoadingUI() -> Promise<String> {
-        return Promise<String> { [unowned self] scene -> Void in
-            self.ref.child("footprintPosts").child(self.userInfo.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                if(!snapshot.exists()) {
-                    scene.fulfill("NotExist")
-                }
-                guard let value = (snapshot.value as? NSDictionary) else { return }
-                
-                if(value != self.lastData) {
-                    self.lastData = value
-                    FootPrintAnnotationList.shared.fpaList?.removeAll()
-                    for child in snapshot.children {
-                        let snap = child as! DataSnapshot
-                        let key = snap.key
-                        let value = snap.value as! NSDictionary
-                        print(key, value)
-                        let cood = CLLocationCoordinate2D.init(latitude: Double(value["latitude"] as! String)! as CLLocationDegrees, longitude: Double(value["longitude"] as! String)! as CLLocationDegrees)
-                        let title = value["name"] as? String
-                        let imageUrl = value["profileImageURL"] as? String
-                        let created = value["created"] as? String
-                        let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!, created: created, id: key)
-                        //                        item.id = key
-                        FootPrintAnnotationList.shared.fpaList!.append(item)
-                    }
-                    self.mainData = FootPrintAnnotationList.shared
-                    scene.fulfill("SUC")
-                }
-            }, withCancel: nil)
-        }
-    }
-    
     private func callDeleteById(_ ind: Int, _ id: String) -> Promise<String> {
         return Promise<String> { scene -> Void in
-            let deleteStorage = Storage.storage().reference(forURL: self.mainData.fpaList![ind].post.imageUrl!)
+
+            let deleteStorage = Storage.storage().reference(forURL: FootPrintAnnotationList.shared.fpaList![ind].post.imageUrl!)
             deleteStorage.delete(completion: { (err) in
                 guard let errorCode = (err as NSError?)?.code else { return scene.fulfill("SUC") }
                 guard let error = StorageErrorCode(rawValue: errorCode) else { return }
@@ -109,7 +78,7 @@ extension FireBaseUtil {
         }
     }
     
-    func rxAllPostLoad() -> Observable<NSEnumerator> {
+    func rxAllPostLoad() -> Observable<String> {
         return Observable.create { seal in
             self.fbAllPostLoad(completed: { (snapshot) in
                 guard let snapshot = snapshot else { return seal.onError(tempError.UnwrappedError) }
@@ -117,8 +86,21 @@ extension FireBaseUtil {
                 if(!snapshot.exists()) {
                     seal.onError(tempError.NotExist)
                 }
+                FootPrintAnnotationList.shared.fpaList!.removeAll()
                 
-                seal.onNext(snapshot.children)
+                for child in snapshot.children {
+                    let snap = child as! DataSnapshot
+                    let key = snap.key
+                    let value = snap.value as! NSDictionary
+                    print(key, value)
+                    let cood = CLLocationCoordinate2D.init(latitude: Double(value["latitude"] as! String)! as CLLocationDegrees, longitude: Double(value["longitude"] as! String)! as CLLocationDegrees)
+                    let title = value["name"] as? String
+                    let imageUrl = value["profileImageURL"] as? String
+                    let created = value["created"] as? String
+                    let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!, created: created, id: key)
+                    FootPrintAnnotationList.shared.fpaList!.append(item)
+                }
+                seal.onNext("SUC")
             }, cancel: nil)
             return Disposables.create()
         }
