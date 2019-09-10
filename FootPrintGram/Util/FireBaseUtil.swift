@@ -18,21 +18,20 @@ class FireBaseUtil {
     
     static let shared = FireBaseUtil()
     
-    var userInfo = UserInfo.shared
+    private var userInfo = UserInfo.shared
     
-    let settingMeta = StorageMetadata.init()
-    let storage = Storage.storage().reference().child("userPostImage")
+    private let settingMeta = StorageMetadata.init()
+    private let storage = Storage.storage().reference().child("userPostImage")
     
-    var ref = Database.database().reference()
-    
-    var lastData: NSDictionary!
+    private var ref = Database.database().reference();
     
     var recentStorage: StorageReference!
     
     private func callDeleteById(_ ind: Int, _ id: String) -> Promise<String> {
         return Promise<String> { scene -> Void in
 
-            let deleteStorage = Storage.storage().reference(forURL: FootPrintAnnotationList.shared.fpaList![ind].post.imageUrl!)
+            guard let imgUrl = FootPrintAnnotationList.shared.itemImageUrl(ind: ind) else { return }
+            let deleteStorage = Storage.storage().reference(forURL: imgUrl)
             deleteStorage.delete(completion: { (err) in
                 guard let errorCode = (err as NSError?)?.code else { return scene.fulfill("SUC") }
                 guard let error = StorageErrorCode(rawValue: errorCode) else { return }
@@ -49,7 +48,7 @@ class FireBaseUtil {
     }
     
     private func callDeleteDBById(_ id: String) -> Promise<String> {
-        return Promise<String> { scene in self.ref.child("footprintPosts").child(self.userInfo.uid).child(id).removeValue(completionBlock: { (err, ref) in
+        return Promise<String> { scene in self.ref.child("footprintPosts").child(self.userInfo.o_uid).child(id).removeValue(completionBlock: { (err, ref) in
                 guard let err = err else { return scene.fulfill("SUC") }
                 return scene.reject(err)
             })
@@ -74,7 +73,7 @@ extension FireBaseUtil {
     
     func fbAllPostLoad(completed: @escaping (DataSnapshot?) -> Void, cancel: ((Error) -> Void)?) {
         DispatchQueue.global().async {
-            self.ref.child("footprintPosts").child(self.userInfo.uid).observeSingleEvent(of: .value, with: completed, withCancel: cancel)
+            self.ref.child("footprintPosts").child(self.userInfo.o_uid).observeSingleEvent(of: .value, with: completed, withCancel: cancel)
         }
     }
     
@@ -86,7 +85,7 @@ extension FireBaseUtil {
                 if(!snapshot.exists()) {
                     seal.onError(tempError.NotExist)
                 }
-                FootPrintAnnotationList.shared.fpaList!.removeAll()
+                FootPrintAnnotationList.shared.removeAllItem()
                 
                 for child in snapshot.children {
                     let snap = child as! DataSnapshot
@@ -98,7 +97,7 @@ extension FireBaseUtil {
                     let imageUrl = value["profileImageURL"] as? String
                     let created = value["created"] as? String
                     let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!, created: created, id: key)
-                    FootPrintAnnotationList.shared.fpaList!.append(item)
+                    FootPrintAnnotationList.shared.appendItem(item: item)
                 }
                 seal.onNext("SUC")
             }, cancel: nil)
@@ -111,10 +110,10 @@ extension FireBaseUtil {
         temp_data["profileImageURL"] = url
         let r_data = (temp_data as NSDictionary)
         DispatchQueue.global().async {
-            Database.database().reference().child("footprintPosts").child(self.userInfo.uid).childByAutoId().setValue(r_data, withCompletionBlock: completed)
+            Database.database().reference().child("footprintPosts").child(self.userInfo.o_uid).childByAutoId().setValue(r_data, withCompletionBlock: completed)
         }
     }
-    
+
     func rxUploadData(data: [String:String], url: String) -> Observable<Bool?> {
         return Observable.create { seal in
             self.fbUploadData(data: data, url: url) { (err, ref) in
@@ -125,17 +124,17 @@ extension FireBaseUtil {
             return Disposables.create()
         }
     }
-    
+
     func fbUploadImage(_ title: String, _ data: Data, completed: @escaping (StorageMetadata?, Error?) -> Void) {
         settingMeta.contentType = "image/jepg"
-        let r_storage = storage.child(userInfo.uid).child(title + Date.init().description)
+        let r_storage = storage.child(userInfo.o_uid).child(title + Date.init().description)
         recentStorage = r_storage
         
         DispatchQueue.global().async {
             r_storage.putData(data, metadata: self.settingMeta, completion: completed)
         }
     }
-    
+
     func rxUploadImage(_ title: String, _ data: Data) -> Observable<Bool?> {
         return Observable.create { seal in
             self.fbUploadImage(title, data) { smeta, err in
@@ -145,14 +144,14 @@ extension FireBaseUtil {
             return Disposables.create()
         }
     }
-    
+
     func fbGetImageUrl(completed: @escaping (URL?, Error?) -> Void) {
         guard let rStorage = recentStorage else { return }
         DispatchQueue.global().async {
             rStorage.downloadURL(completion: completed)
         }
     }
-    
+
     func rxGetImageUrl() -> Observable<String?> {
         return Observable.create { seal in
             self.fbGetImageUrl(){ url, err in

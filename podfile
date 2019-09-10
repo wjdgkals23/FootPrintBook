@@ -18,5 +18,6 @@ pod 'SVProgressHUD'
 pod "PromiseKit", "~> 6.8"
 pod 'RxSwift'
 pod 'RxCocoa'
+pod 'RxMKMapView'
 
 end

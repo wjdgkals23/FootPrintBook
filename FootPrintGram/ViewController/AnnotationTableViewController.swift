@@ -33,22 +33,22 @@ class AnnotationTableViewController: UITableViewController, UIGestureRecognizerD
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        if(annotationList.fpaList == nil) {
+        if(annotationList.getList() == nil) {
             return 0
         }
-        return annotationList.fpaList?.count ?? 0
+        return annotationList.getList()!.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")
         let customcell = cell as! FootPrintTableCell
-        customcell.title.text = annotationList.fpaList![indexPath.row].post.title
-        customcell.date.text = annotationList.fpaList![indexPath.row].post.created
+        customcell.title.text = annotationList.getList()![indexPath.row].post.title
+        customcell.date.text = annotationList.getList()![indexPath.row].post.created
         return customcell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selected = annotationList.fpaList![indexPath.row]
+        selected = annotationList.getList()![indexPath.row]
         for item in self.navigationController!.viewControllers {
             if item is MapViewController {
                 let mapView = item as! MapViewController
@@ -60,15 +60,8 @@ class AnnotationTableViewController: UITableViewController, UIGestureRecognizerD
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            print("delete")
-            print(annotationList.fpaList![indexPath.row].id!)
-            FireBaseUtil.shared.deleteTotalFunc(indexPath.row, annotationList.fpaList![indexPath.row].id!).done { (result) in
-                for item in self.navigationController!.viewControllers {
-                    if item is MapViewController {
-                        let mapView = item as! MapViewController
-                        mapView.signalStr = "Delete"
-                    }
-                }
+            print(annotationList.getList()![indexPath.row].id!)
+            FireBaseUtil.shared.deleteTotalFunc(indexPath.row, annotationList.getList()![indexPath.row].id!).done { (result) in
                 self.navigationController?.popViewController(animated: true)
                 }.catch { (err) in
                     self.failRegister(message: "삭제로딩실패")

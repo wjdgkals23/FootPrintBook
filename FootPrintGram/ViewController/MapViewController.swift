@@ -14,6 +14,7 @@ import FirebaseDatabase
 import FirebaseStorage
 import SVProgressHUD
 import RxSwift
+import RxMKMapView
 
 class MapViewController: UIViewController {
     
@@ -31,8 +32,7 @@ class MapViewController: UIViewController {
     var mainData: FootPrintAnnotationList!
     var ref = Database.database().reference()
     
-    var lastData: NSDictionary!
-    var signalStr: String!
+    var selectedSign: String?
     
     weak var alertManager = MakeAlert.shared
     
@@ -43,8 +43,7 @@ class MapViewController: UIViewController {
     // MARK: - Override Func
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        // delegate setting
+
         mapView.delegate = self
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -55,12 +54,11 @@ class MapViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if(signalStr == "Delete") {
-            mapView.removeAnnotations(self.mainData.fpaList!)
-            getAnnotation()
-            signalStr = ""
-            return
-        }
+        guard let fpaList = self.mainData else { return }
+        
+        mapView.removeAnnotations(fpaList.getList()!)
+        getAnnotation()
+
         guard let willAnnotation = selectedAnnotation else { return }
 
         let region = MKCoordinateRegion.init(center: willAnnotation.coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
@@ -76,33 +74,6 @@ class MapViewController: UIViewController {
     }
     
     // MARK: - Private Func
-    private func makePhotoView(anno: FootPrintAnnotation) -> UIView {
-        let title = anno.title!
-        let target = annotationImageDict[title]!
-        let ratio = target.size.height/target.size.width
-        let height = (self.view.frame.width/3)*ratio
-        let resizedImage = UIImage.resize(image: target, targetSize: CGSize.init(width: self.view.frame.width/3, height: height))
-        
-        let initView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.width/3 + 30, height: height + 30))
-        let label = UILabel.init()
-        let text = NSMutableAttributedString.init(string: anno.post.created!)
-        let font = UIFont.boldSystemFont(ofSize: 15)
-        text.addAttribute(kCTFontAttributeName as NSAttributedString.Key, value: font, range: (anno.post.created! as NSString).range(of: anno.post.created!))
-        label.attributedText = text
-        initView.addSubview(label)
-        label.snp.makeConstraints { (make) in
-            make.bottom.left.right.equalTo(initView)
-            make.height.equalTo(20)
-        }
-        let imageView = UIImageView.init(image: resizedImage)
-        initView.addSubview(imageView)
-        imageView.snp.makeConstraints { (make) in
-            make.bottom.equalTo(label.snp.top)
-            make.left.right.top.equalTo(initView)
-        }
-        return initView
-    }
-    
     private func setupView() {
         self.navigationController?.isNavigationBarHidden = true
         self.view.addSubview(mapView)
@@ -176,6 +147,7 @@ class MapViewController: UIViewController {
     }
     
     private func getAnnotation() {
+        print("getAnnotation")
         let group = DispatchGroup()
         self.view.isUserInteractionEnabled = false
         SVProgressHUD.show()
@@ -195,17 +167,13 @@ class MapViewController: UIViewController {
         group.notify(queue: .main) {
             print("load Done")
             self.view.isUserInteractionEnabled = true
-            if(self.signalStr == "NotExist") {
-                self.mainData.fpaList = []
-            }
-            self.signalStr = ""
-            self.mapView.showAnnotations(self.mainData.fpaList!, animated: true)
+            self.mapView.showAnnotations(self.mainData.getList()!, animated: true)
             SVProgressHUD.dismiss()
         }
     }
     
     private func loadImage() {
-        for item in self.mainData.fpaList! {
+        for item in self.mainData.getList()! {
             let url = URL.init(string: item.post.imageUrl!)
             var image: UIImage!
             guard let data = NSData.init(contentsOf: url!) else {
@@ -261,7 +229,7 @@ class MapViewController: UIViewController {
             print("cancel")
         } else if segue.identifier == "registerEnd" {
             mapView.removeAnnotation(lastAnnotation)
-            mapView.removeAnnotations(self.mainData.fpaList!)
+            mapView.removeAnnotations(self.mainData.getList()!)
             lastAnnotation = nil
             getAnnotation()
         }
@@ -271,6 +239,34 @@ class MapViewController: UIViewController {
 // MARK: - Delegate Func
 
 extension MapViewController: MKMapViewDelegate {
+    
+    private func makePhotoView(anno: FootPrintAnnotation) -> UIView {
+        let title = anno.title!
+        let target = annotationImageDict[title]!
+        let ratio = target.size.height/target.size.width
+        let height = (self.view.frame.width/3)*ratio
+        let resizedImage = UIImage.resize(image: target, targetSize: CGSize.init(width: self.view.frame.width/3, height: height))
+        
+        let initView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.width/3 + 30, height: height + 30))
+        let label = UILabel.init()
+        let text = NSMutableAttributedString.init(string: anno.post.created!)
+        let font = UIFont.boldSystemFont(ofSize: 15)
+        text.addAttribute(kCTFontAttributeName as NSAttributedString.Key, value: font, range: (anno.post.created! as NSString).range(of: anno.post.created!))
+        label.attributedText = text
+        initView.addSubview(label)
+        label.snp.makeConstraints { (make) in
+            make.bottom.left.right.equalTo(initView)
+            make.height.equalTo(20)
+        }
+        let imageView = UIImageView.init(image: resizedImage)
+        initView.addSubview(imageView)
+        imageView.snp.makeConstraints { (make) in
+            make.bottom.equalTo(label.snp.top)
+            make.left.right.top.equalTo(initView)
+        }
+        return initView
+    }
+    
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         guard let title = annotation.title! else { return nil }

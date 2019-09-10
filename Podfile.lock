@@ -129,6 +129,9 @@ PODS:
   - RxCocoa (5.0.0):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
+  - RxMKMapView (5.0.0):
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
   - RxRelay (5.0.0):
     - RxSwift (~> 5)
   - RxSwift (5.0.0)
@@ -145,6 +148,7 @@ DEPENDENCIES:
   - GoogleSignIn (= 4.4.0)
   - PromiseKit (~> 6.8)
   - RxCocoa
+  - RxMKMapView
   - RxSwift
   - SnapKit (~> 5.0.0)
   - SVProgressHUD
@@ -177,6 +181,7 @@ SPEC REPOS:
     - PromiseKit
     - Protobuf
     - RxCocoa
+    - RxMKMapView
     - RxRelay
     - RxSwift
     - SnapKit
@@ -209,12 +214,13 @@ SPEC CHECKSUMS:
   PromiseKit: e4863d06976e7dee5e41c04fc7371c16b3600292
   Protobuf: 1097ca58584c8d9be81bfbf2c5ff5975648dd87a
   RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
+  RxMKMapView: 7b19fc545887314851ea67b12193bc8c6004dcb5
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   TextFieldEffects: 529b8aff706fb40f82c41c780c0777941a893796
 
-PODFILE CHECKSUM: 8df40d9885ee7ee9b7cb0fa500eb6316868e7cf7
+PODFILE CHECKSUM: aff438251d1332760c5bbab2286b7036b815f5e2
 
 COCOAPODS: 1.6.1
