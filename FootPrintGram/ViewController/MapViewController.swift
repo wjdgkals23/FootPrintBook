@@ -44,21 +44,20 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        mapView.delegate = self
+        mapView.rx
+            .setDelegate(self)
+            .disposed(by: disposeBag)
+        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
         setupView()
         checkLocationAuthorization()
-        getAnnotation()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        guard let fpaList = self.mainData else { return }
+        getAnnotation2()
         
-        mapView.removeAnnotations(fpaList.getList()!)
-        getAnnotation()
-
         guard let willAnnotation = selectedAnnotation else { return }
 
         let region = MKCoordinateRegion.init(center: willAnnotation.coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
@@ -146,44 +145,28 @@ class MapViewController: UIViewController {
         }
     }
     
-    private func getAnnotation() {
-        print("getAnnotation")
-        let group = DispatchGroup()
-        self.view.isUserInteractionEnabled = false
+    private func getAnnotation2() {
         SVProgressHUD.show()
-        group.enter()
-        
-        FireBaseUtil.shared.rxAllPostLoad()
-            .subscribe(onNext: { snap in
-                self.mainData = FootPrintAnnotationList.shared
-                self.loadImage()
-                group.leave()
-            }, onError: { err in
+        FireBaseUtil.shared.rxAllPostLoad2()
+            .asDriver(onErrorJustReturn: [])
+            .do(onNext: { AnnotationList in
                 SVProgressHUD.dismiss()
-                self.failRegister(message: err.localizedDescription)
             })
-        .disposed(by: disposeBag)
-        
-        group.notify(queue: .main) {
-            print("load Done")
-            self.view.isUserInteractionEnabled = true
-            self.mapView.showAnnotations(self.mainData.getList()!, animated: true)
-            SVProgressHUD.dismiss()
-        }
+            .drive(mapView.rx.annotations)
+            .disposed(by: disposeBag)
     }
     
-    private func loadImage() {
-        for item in self.mainData.getList()! {
-            let url = URL.init(string: item.post.imageUrl!)
-            var image: UIImage!
-            guard let data = NSData.init(contentsOf: url!) else {
-                image = #imageLiteral(resourceName: "AddImage")
-                self.annotationImageDict[item.post.title!] = image
-                return
-            }
-            image = UIImage(data: data as Data)
+    private func loadImage2(_ item: FootPrintAnnotation) -> UIImage? {
+        let url = URL.init(string: item.post.imageUrl!)
+        var image: UIImage!
+        guard let data = NSData.init(contentsOf: url!) else {
+            image = #imageLiteral(resourceName: "AddImage")
             self.annotationImageDict[item.post.title!] = image
+            return image
         }
+        image = UIImage(data: data as Data)
+        self.annotationImageDict[item.post.title!] = image
+        return image
     }
     
     // MARK: - Gesture Func
@@ -202,7 +185,7 @@ class MapViewController: UIViewController {
         if lastAnnotation != nil {
             alertManager?.makeOneActionAlert(target: self, title: "Annotation already dropped", message: "There is an annotation on screen. Tap the Map If you want Remove Annotation", dismiss: true)
         } else {
-            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: "New Post", imageUrl: nil, created: nil, id: nil)
+            lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: nil, imageUrl: nil, created: nil, id: nil)
             self.mapView.addAnnotation(lastAnnotation)
         }
     }
@@ -229,9 +212,9 @@ class MapViewController: UIViewController {
             print("cancel")
         } else if segue.identifier == "registerEnd" {
             mapView.removeAnnotation(lastAnnotation)
-            mapView.removeAnnotations(self.mainData.getList()!)
+            mapView.removeAnnotations(mapView.annotations)
             lastAnnotation = nil
-            getAnnotation()
+            getAnnotation2()
         }
     }
 }
@@ -241,8 +224,7 @@ class MapViewController: UIViewController {
 extension MapViewController: MKMapViewDelegate {
     
     private func makePhotoView(anno: FootPrintAnnotation) -> UIView {
-        let title = anno.title!
-        let target = annotationImageDict[title]!
+        let target = self.loadImage2(anno)!
         let ratio = target.size.height/target.size.width
         let height = (self.view.frame.width/3)*ratio
         let resizedImage = UIImage.resize(image: target, targetSize: CGSize.init(width: self.view.frame.width/3, height: height))
@@ -269,7 +251,23 @@ extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
-        guard let title = annotation.title! else { return nil }
+        guard let title = annotation.title! else {
+            let annotationView = MKAnnotationView()
+            let imageView = UIImageView.init(image: #imageLiteral(resourceName: "FirstPrint"))
+        
+            imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
+            
+            annotationView.addSubview(imageView)
+            
+            let annoButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 40, height: 40))
+            annoButton.setImage(#imageLiteral(resourceName: "AddBtn"), for: .normal)
+            annotationView.rightCalloutAccessoryView = annoButton
+
+            annotationView.isEnabled = true
+            annotationView.canShowCallout = true
+            
+            return annotationView
+        }
         
         if (annotation is FootPrintAnnotation) {
             if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: title) {
@@ -277,21 +275,13 @@ extension MapViewController: MKMapViewDelegate {
             } else {
                 let currentAnnotation = annotation as! FootPrintAnnotation
                 let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: title)
-                let imageView = UIImageView.init(image: currentAnnotation.post.imageUrl! == "@default" ? #imageLiteral(resourceName: "FirstPrint") : #imageLiteral(resourceName: "MyPrint"))
-                if currentAnnotation.post.imageUrl! == "@defalut" {
-                    imageView.tintColor = #colorLiteral(red: 0.9372549057, green: 0.3490196168, blue: 0.1921568662, alpha: 1)
-                }
+                let imageView = UIImageView.init(image: #imageLiteral(resourceName: "MyPrint"))
+    
                 imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
                 
                 annotationView.addSubview(imageView)
                 
-                if(annotationImageDict[title] != nil) {
-                    annotationView.detailCalloutAccessoryView = makePhotoView(anno: currentAnnotation)
-                } else {
-                    let annoButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 40, height: 40))
-                    annoButton.setImage(#imageLiteral(resourceName: "AddBtn"), for: .normal)
-                    annotationView.rightCalloutAccessoryView = annoButton
-                }
+                annotationView.detailCalloutAccessoryView = makePhotoView(anno: currentAnnotation)
                 
                 annotationView.isEnabled = true
                 annotationView.canShowCallout = true
@@ -299,6 +289,7 @@ extension MapViewController: MKMapViewDelegate {
                 return annotationView
             }
         }
+        
         return nil
     }
     

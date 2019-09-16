@@ -13,7 +13,7 @@ class Post {
     var imageUrl: String?
     var created: String?
     
-    init(title: String, imageUrl: String, created: String) {
+    init(title: String?, imageUrl: String?, created: String) {
         self.title = title
         self.imageUrl = imageUrl
         self.created = created

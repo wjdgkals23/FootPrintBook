@@ -105,6 +105,34 @@ extension FireBaseUtil {
         }
     }
     
+    func rxAllPostLoad2() -> Observable<[FootPrintAnnotation]> {
+        return Observable.create { seal in
+            self.fbAllPostLoad(completed: { (snapshot) in
+                guard let snapshot = snapshot else { return seal.onError(tempError.UnwrappedError) }
+                
+                if(!snapshot.exists()) {
+                    seal.onError(tempError.NotExist)
+                }
+                FootPrintAnnotationList.shared.removeAllItem()
+                
+                for child in snapshot.children {
+                    let snap = child as! DataSnapshot
+                    let key = snap.key
+                    let value = snap.value as! NSDictionary
+                    print(key, value)
+                    let cood = CLLocationCoordinate2D.init(latitude: Double(value["latitude"] as! String)! as CLLocationDegrees, longitude: Double(value["longitude"] as! String)! as CLLocationDegrees)
+                    let title = value["name"] as? String
+                    let imageUrl = value["profileImageURL"] as? String
+                    let created = value["created"] as? String
+                    let item = FootPrintAnnotation.init(coordinate: cood, title: title!, imageUrl: imageUrl!, created: created, id: key)
+                    FootPrintAnnotationList.shared.appendItem(item: item)
+                }
+                seal.onNext(FootPrintAnnotationList.shared.getList()!)
+            }, cancel: nil)
+            return Disposables.create()
+        }
+    }
+    
     func fbUploadData(data: [String:String], url: String, completed: @escaping (Error?, DatabaseReference?) -> Void) {
         var temp_data = data
         temp_data["profileImageURL"] = url
