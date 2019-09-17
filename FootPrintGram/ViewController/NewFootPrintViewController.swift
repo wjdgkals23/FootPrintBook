@@ -11,12 +11,16 @@ import UIKit
 import SnapKit
 import TextFieldEffects
 import SVProgressHUD
+import RxSwift
+import RxCocoa
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
     var flag: Bool!
     var userInfo = UserInfo.shared
     var fireUtil = FireBaseUtil.shared
+    
+    var disposeBag = DisposeBag()
     
     var newAnnotation: FootPrintAnnotation!
     var postImage: Data!
@@ -131,17 +135,26 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
         let postData = ["name": self.titleField.text!, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text!, "created": self.newAnnotation.post.created!]
         let title = self.titleField.text!
-        DispatchQueue.global().async { [unowned self] in
-            self.fireUtil.totalFunc(title, uploadImage!, data2: postData).done{ result in
-                DispatchQueue.main.async {
+        let uploadImageOb = self.fireUtil.rxUploadImage(title, uploadImage!)
+        let downLoadUrlOb = self.fireUtil.rxGetImageUrl()
+        
+        
+        uploadImageOb.flatMapLatest{ b in downLoadUrlOb}
+            .flatMapLatest{ url in self.fireUtil.rxUploadData(data: postData, url: url!) }
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { result in
+                if result! {
                     SVProgressHUD.dismiss()
                     self.performSegue(withIdentifier: "registerEnd", sender: self)
+                } else {
+                    SVProgressHUD.dismiss()
+                    self.failRegister(message: "업로드실패")
                 }
-            }.catch{ err in
+            }, onError: { err in
                 SVProgressHUD.dismiss()
                 self.failRegister(message: err.localizedDescription)
-            }
-        }
+            })
+        .disposed(by: disposeBag)
     }
 }
 

@@ -44,8 +44,8 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDeleg
             if let error = error {
                 print(error.localizedDescription)
             } else {
-                that?.userInfo.uid = user?.user.uid
-                that?.userInfo.email = user?.user.email
+                that?.userInfo.o_uid = user?.user.uid
+                that?.userInfo.o_email = user?.user.email
                 that!.performSegue(withIdentifier: "SignIn", sender: that)
             }
         }

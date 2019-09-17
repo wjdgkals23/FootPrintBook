@@ -1,4 +1,4 @@
-#Uncomment the next line to define a global platform for your project
+#comment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
 target 'FootPrintGram' do
@@ -16,4 +16,8 @@ pod 'Firebase/Storage'
 pod 'GoogleSignIn', '4.4.0'
 pod 'SVProgressHUD'
 pod "PromiseKit", "~> 6.8"
+pod 'RxSwift'
+pod 'RxCocoa'
+pod 'RxMKMapView'
+
 end

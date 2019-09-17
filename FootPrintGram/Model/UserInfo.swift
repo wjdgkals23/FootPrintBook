@@ -9,8 +9,26 @@
 import Foundation
 
 class UserInfo {
-    var uid: String!
-    var email: String!
+    private var uid: String!
+    private var email: String!
+    
+    var o_uid: String! {
+        get {
+            return uid
+        }
+        set(new) {
+            self.uid = new
+        }
+    }
+    
+    var o_email: String! {
+        get {
+            return self.email
+        }
+        set(new) {
+            self.email = new
+        }
+    }
     
     static let shared = UserInfo()
 }
