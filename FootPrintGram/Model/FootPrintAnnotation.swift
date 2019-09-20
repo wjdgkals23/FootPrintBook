@@ -23,14 +23,17 @@ class FootPrintAnnotation: NSObject, MKAnnotation {
     
     init(coordinate: CLLocationCoordinate2D, title: String?, imageUrl: String?, created: String?, id: String?) {
         self.coordinate = coordinate
-        self.id = id
-        if let title = title, let imageString = imageUrl, let createdString = created {
-            self.post = Post.init(title: title, imageUrl: imageString, created: createdString)
-        } else {
+        
+        guard let title = title else {
             let dateFormatter = DateFormatter.init()
             dateFormatter.dateFormat = "yyyy-MM-dd, HH:mm"
             let result = dateFormatter.string(from: Date())
-            self.post = Post.init(title: nil, imageUrl: nil, created: result)
+            self.id = nil
+            self.post = Post.init(title: "Add New Post", imageUrl: nil, created: result)
+            return
         }
+        
+        self.id = id!;
+        self.post = Post.init(title: title, imageUrl: imageUrl!, created: created!)
     }
 }

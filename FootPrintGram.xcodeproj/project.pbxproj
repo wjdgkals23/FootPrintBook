@@ -109,7 +109,6 @@
 				9003454622F52F5C007573E3 /* Util */,
 				9003453E22F51671007573E3 /* ViewController */,
 				9003453C22F51655007573E3 /* Model */,
-				F4688145230103D00079F07B /* ListModel */,
 				9003453B22F51646007573E3 /* Storyboard */,
 				9003452822F51197007573E3 /* AppDelegate.swift */,
 				9003452F22F51198007573E3 /* Assets.xcassets */,
@@ -130,6 +129,7 @@
 		9003453C22F51655007573E3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */,
 				9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */,
 				F468810122FAA3D60079F07B /* UserInfo.swift */,
 				F4688150230389190079F07B /* Post.swift */,
@@ -157,14 +157,6 @@
 				F41165E2230CD29100A7339C /* DevideSimulReal.swift */,
 			);
 			path = Util;
-			sourceTree = "<group>";
-		};
-		F4688145230103D00079F07B /* ListModel */ = {
-			isa = PBXGroup;
-			children = (
-				F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */,
-			);
-			path = ListModel;
 			sourceTree = "<group>";
 		};
 		F468815B230A3C2E0079F07B /* Cell */ = {

@@ -181,12 +181,12 @@ class MapViewController: UIViewController {
     }
     
     @objc func addPin() {
-        centerToUsersLocation()
         if lastAnnotation != nil {
             alertManager?.makeOneActionAlert(target: self, title: "Annotation already dropped", message: "There is an annotation on screen. Tap the Map If you want Remove Annotation", dismiss: true)
         } else {
             lastAnnotation = FootPrintAnnotation.init(coordinate: locationManager.location!.coordinate, title: nil, imageUrl: nil, created: nil, id: nil)
             self.mapView.addAnnotation(lastAnnotation)
+            centerToUsersLocation()
         }
     }
     
@@ -251,10 +251,12 @@ extension MapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
-        guard let title = annotation.title! else {
-            let annotationView = MKAnnotationView()
-            let imageView = UIImageView.init(image: #imageLiteral(resourceName: "FirstPrint"))
+        guard let currentAnnotation = annotation as? FootPrintAnnotation else { return nil }
         
+        guard let id = currentAnnotation.id else {
+            let annotationView = MKAnnotationView(annotation: currentAnnotation, reuseIdentifier: nil)
+            let imageView = UIImageView.init(image: #imageLiteral(resourceName: "FirstPrint"))
+            
             imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
             
             annotationView.addSubview(imageView)
@@ -262,35 +264,31 @@ extension MapViewController: MKMapViewDelegate {
             let annoButton = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 40, height: 40))
             annoButton.setImage(#imageLiteral(resourceName: "AddBtn"), for: .normal)
             annotationView.rightCalloutAccessoryView = annoButton
-
+            
             annotationView.isEnabled = true
             annotationView.canShowCallout = true
             
             return annotationView
         }
         
-        if (annotation is FootPrintAnnotation) {
-            if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: title) {
-                return annotationView
-            } else {
-                let currentAnnotation = annotation as! FootPrintAnnotation
-                let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: title)
-                let imageView = UIImageView.init(image: #imageLiteral(resourceName: "MyPrint"))
-    
-                imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
-                
-                annotationView.addSubview(imageView)
-                
-                annotationView.detailCalloutAccessoryView = makePhotoView(anno: currentAnnotation)
-                
-                annotationView.isEnabled = true
-                annotationView.canShowCallout = true
-                
-                return annotationView
-            }
+        if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: id) {
+            return annotationView
+        } else {
+            let annotationView = MKAnnotationView(annotation: currentAnnotation, reuseIdentifier: currentAnnotation.id!)
+            let imageView = UIImageView.init(image: #imageLiteral(resourceName: "MyPrint"))
+
+            imageView.frame = CGRect.init(x: annotationView.frame.origin.x + annotationView.frame.width/2 - 20, y: annotationView.frame.origin.y + annotationView.frame.height/2 - 20, width: 40, height: 40)
+            
+            annotationView.addSubview(imageView)
+            
+            annotationView.detailCalloutAccessoryView = makePhotoView(anno: currentAnnotation)
+            
+            annotationView.isEnabled = true
+            annotationView.canShowCallout = true
+            
+            return annotationView
         }
         
-        return nil
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
