@@ -16,11 +16,12 @@ import RxCocoa
 
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
+    let disposeBag = DisposeBag()
+    let viewModel = NewFootPrintViewModel()
+    
     var flag: Bool!
     var userInfo = UserInfo.shared
     var fireUtil = FireBaseUtil.shared
-    
-    var disposeBag = DisposeBag()
     
     var newAnnotation: FootPrintAnnotation!
     var postImage: Data!
@@ -38,7 +39,6 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     
     var firstHeight: CGFloat!
     
-    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,9 +46,41 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         // Do any additional setup after loading the view.
         setupView()
         firstHeight = self.view.frame.height
+        buttonEventBind()
     }
     
     // MARK: - Private
+    
+    func buttonEventBind() {
+        
+        let imageObs = addImageButton.rx.observe(Optional<UIImage>.self, "image")
+        let defaultImage = #imageLiteral(resourceName: "AddImage")
+        let imageValue: Observable<UIImage> = imageObs.map{ image in
+            return image! ?? defaultImage
+        }
+        
+        imageValue
+            .bind(to: viewModel.image)
+            .disposed(by: disposeBag)
+        
+        cancelButton.rx.tap.bind{ [weak self] in
+            print(self?.viewModel.makePostData())
+//            self?.performSegue(withIdentifier: "cancel", sender: self)
+            }.disposed(by: disposeBag)
+        
+        titleField.rx.text.orEmpty
+            .bind(to: viewModel.titleText)
+            .disposed(by: disposeBag)
+        
+        latitudeTextField.rx.text.orEmpty
+            .bind(to: viewModel.latitudeValue)
+            .disposed(by: disposeBag)
+        
+        longitudeTextField.rx.text.orEmpty
+            .bind(to: viewModel.longitudeValue)
+            .disposed(by: disposeBag)
+
+    }
     
     func componentSetting(target: UIView, title: String, superView: UIView, topView: UIView) {
         if let textTarget = target as? HoshiTextField {
@@ -83,6 +115,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
             make.top.left.right.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
         self.scrollView.addSubview(contentView)
+
         contentView.snp.makeConstraints { (make) in
             make.width.equalTo(self.scrollView)
             make.height.equalTo(self.scrollView).priority(.low)
@@ -95,7 +128,6 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
             make.width.height.equalTo(40)
         }
         cancelButton.setImage(#imageLiteral(resourceName: "CloseIcon"), for: .normal)
-        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         
         componentSetting(target: titleField, title: "Title", superView: self.contentView, topView: cancelButton)
         
@@ -132,15 +164,11 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     
     @objc func registerPost() {
         SVProgressHUD.show()
-        let uploadImage = self.addImageButton.image!.jpegData(compressionQuality:0.1)
-        let postData = ["name": self.titleField.text!, "latitude": self.latitudeTextField.text!, "longitude": self.longitudeTextField.text!, "created": self.newAnnotation.post.created!]
-        let title = self.titleField.text!
-        let uploadImageOb = self.fireUtil.rxUploadImage(title, uploadImage!)
+        let uploadImageOb = self.fireUtil.rxUploadImage(viewModel.makeTitle()!, viewModel.makeUploadImage()!)
         let downLoadUrlOb = self.fireUtil.rxGetImageUrl()
         
-        
         uploadImageOb.flatMapLatest{ b in downLoadUrlOb}
-            .flatMapLatest{ url in self.fireUtil.rxUploadData(data: postData, url: url!) }
+            .flatMapLatest{ url in self.fireUtil.rxUploadData(data: self.viewModel.makePostData(), url: url!) }
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { result in
                 if result! {
