@@ -25,6 +25,7 @@
 		F4688151230389190079F07B /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4688150230389190079F07B /* Post.swift */; };
 		F46881582303FB4C0079F07B /* FireBaseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46881572303FB4C0079F07B /* FireBaseUtil.swift */; };
 		F468815D230A3CB30079F07B /* FootPrintTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F468815C230A3CB30079F07B /* FootPrintTableCell.swift */; };
+		F4D50482233847B0003495AB /* NewFootPrintViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D50481233847B0003495AB /* NewFootPrintViewModel.swift */; };
 		F4DBF36D2314ECF1002EB9E5 /* UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBF36C2314ECF1002EB9E5 /* UIViewControllerExtension.swift */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,7 @@
 		F4688150230389190079F07B /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		F46881572303FB4C0079F07B /* FireBaseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseUtil.swift; sourceTree = "<group>"; };
 		F468815C230A3CB30079F07B /* FootPrintTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintTableCell.swift; sourceTree = "<group>"; };
+		F4D50481233847B0003495AB /* NewFootPrintViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFootPrintViewModel.swift; sourceTree = "<group>"; };
 		F4DBF36C2314ECF1002EB9E5 /* UIViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtension.swift; sourceTree = "<group>"; };
 		FC61DBAE6277375D2EF93D66 /* Pods-FootPrintGram.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.release.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -107,9 +109,9 @@
 				F468815B230A3C2E0079F07B /* Cell */,
 				F46880FB22F961B70079F07B /* GoogleService-Info.plist */,
 				9003454622F52F5C007573E3 /* Util */,
+				F4D5048023384793003495AB /* ViewModel */,
 				9003453E22F51671007573E3 /* ViewController */,
 				9003453C22F51655007573E3 /* Model */,
-				F4688145230103D00079F07B /* ListModel */,
 				9003453B22F51646007573E3 /* Storyboard */,
 				9003452822F51197007573E3 /* AppDelegate.swift */,
 				9003452F22F51198007573E3 /* Assets.xcassets */,
@@ -130,6 +132,7 @@
 		9003453C22F51655007573E3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */,
 				9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */,
 				F468810122FAA3D60079F07B /* UserInfo.swift */,
 				F4688150230389190079F07B /* Post.swift */,
@@ -159,20 +162,20 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
-		F4688145230103D00079F07B /* ListModel */ = {
-			isa = PBXGroup;
-			children = (
-				F4688146230103EA0079F07B /* FootPrintAnnotationList.swift */,
-			);
-			path = ListModel;
-			sourceTree = "<group>";
-		};
 		F468815B230A3C2E0079F07B /* Cell */ = {
 			isa = PBXGroup;
 			children = (
 				F468815C230A3CB30079F07B /* FootPrintTableCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		F4D5048023384793003495AB /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				F4D50481233847B0003495AB /* NewFootPrintViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -353,6 +356,7 @@
 				9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */,
 				9003452B22F51197007573E3 /* MapViewController.swift in Sources */,
 				F4688147230103EA0079F07B /* FootPrintAnnotationList.swift in Sources */,
+				F4D50482233847B0003495AB /* NewFootPrintViewModel.swift in Sources */,
 				F468810222FAA3D60079F07B /* UserInfo.swift in Sources */,
 				F46881442300F6B20079F07B /* AnnotationTableViewController.swift in Sources */,
 				9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */,
