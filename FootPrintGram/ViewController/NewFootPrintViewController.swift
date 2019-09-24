@@ -64,12 +64,15 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
             .disposed(by: disposeBag)
         
         cancelButton.rx.tap.bind{ [weak self] in
-            print(self?.viewModel.makePostData())
-//            self?.performSegue(withIdentifier: "cancel", sender: self)
+            self?.performSegue(withIdentifier: "cancel", sender: self)
             }.disposed(by: disposeBag)
         
         titleField.rx.text.orEmpty
-            .bind(to: viewModel.titleText)
+            .bind(to: viewModel.titleConnector)
+            .disposed(by: disposeBag)
+        
+        viewModel.titleData
+            .drive(titleField.rx.text)
             .disposed(by: disposeBag)
         
         latitudeTextField.rx.text.orEmpty
@@ -79,6 +82,12 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         longitudeTextField.rx.text.orEmpty
             .bind(to: viewModel.longitudeValue)
             .disposed(by: disposeBag)
+        
+        viewModel.registerButtonEnabled
+            .drive(registerButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        
 
     }
     
@@ -164,7 +173,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     
     @objc func registerPost() {
         SVProgressHUD.show()
-        let uploadImageOb = self.fireUtil.rxUploadImage(viewModel.makeTitle()!, viewModel.makeUploadImage()!)
+        let uploadImageOb = self.fireUtil.rxUploadImage(titleField.text!, viewModel.makeUploadImage()!)
         let downLoadUrlOb = self.fireUtil.rxGetImageUrl()
         
         uploadImageOb.flatMapLatest{ b in downLoadUrlOb}

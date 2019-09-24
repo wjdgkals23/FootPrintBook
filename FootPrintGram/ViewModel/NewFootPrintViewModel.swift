@@ -8,39 +8,52 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 import MapKit
 
 class NewFootPrintViewModel {
     
-    let disposeBag = DisposeBag()
-    let titleText = BehaviorSubject(value: "")
-   
-    let latitudeValue = BehaviorSubject(value: "")
-    let longitudeValue = BehaviorSubject(value: "")
+    private let disposeBag = DisposeBag()
     
-    let newAnnoValue:BehaviorSubject<FootPrintAnnotation?> = BehaviorSubject(value: nil)
+    public let titleConnector:BehaviorSubject<String>
+    public let latitudeValue = BehaviorSubject(value: "")
+    public let longitudeValue = BehaviorSubject(value: "")
+    public let newAnnoValue:BehaviorSubject<FootPrintAnnotation?> = BehaviorSubject(value: nil)
+    public let postData = BehaviorSubject(value: [])
+    public let image = BehaviorSubject(value: #imageLiteral(resourceName: "AddImage"))
     
-    let postData = BehaviorSubject(value: [])
+    public var scrollViewHeight:CGFloat = 100
+    public let titleData: Driver<String>
+    public let registerButtonEnabled: Driver<Bool>
     
-    let image = BehaviorSubject(value: #imageLiteral(resourceName: "AddImage"))
-    
-    private var scrollViewHeight:CGFloat = 100
-    private var titleData = ""
-    private var latitude = ""
-    private var longitude = ""
-    
+    public var latitude = ""
+    public var longitude = ""
+    public let post: Observable<[String:String]>
     
     init() {
+        titleConnector = BehaviorSubject(value: "")
+        
+        titleData = titleConnector
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: "")
+        
+        post = Observable.combineLatest(titleConnector.asObservable(), latitudeValue.asObservable(), longitudeValue.asObservable(), resultSelector:{ a,b,c in
+            return ["name": a, "latitude": b, "longitude": c, "created": Date().description]
+        })
+        
+        let temp:Observable<Bool> = Observable.combineLatest(titleConnector.asObservable(), latitudeValue.asObservable(), longitudeValue.asObservable(), resultSelector:{ a,b,c in
+            if a != "", b != "", c != "" {
+                return true
+            }
+            return false
+        })
+        
+        registerButtonEnabled = temp.asDriver(onErrorJustReturn: false)
+        
         _ = image.distinctUntilChanged()
             .subscribe({ [weak self] image in
                 guard let image = image.element else { return }
                 self?.scrollViewHeight = image.size.height
-            }).disposed(by: disposeBag)
-        
-        _ = titleText.distinctUntilChanged()
-            .subscribe({ [weak self] title in
-                guard let title = title.element else { return }
-                self?.titleData = title
             }).disposed(by: disposeBag)
         
         _ = latitudeValue.distinctUntilChanged()
@@ -52,10 +65,7 @@ class NewFootPrintViewModel {
             .subscribe({ [weak self] longitude in
                 self?.longitude = longitude.element!
             }).disposed(by: disposeBag)
-    }
-    
-    public func makeTitle() -> String? {
-        return titleData
+        
     }
     
     public func makeUploadImage() -> Data? {
@@ -69,8 +79,8 @@ class NewFootPrintViewModel {
         return returnData
     }
     
-    public func makePostData() -> [String:String] {
-        return ["name": self.titleData, "latitude": self.latitude, "longitude": self.longitude, "created": Date().description]
+    public func makePostData() ->[String:String] {
+        return [String:String]()
     }
 
 }
