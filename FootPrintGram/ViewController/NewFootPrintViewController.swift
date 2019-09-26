@@ -177,7 +177,10 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
         let downLoadUrlOb = self.fireUtil.rxGetImageUrl()
         
         uploadImageOb.flatMapLatest{ b in downLoadUrlOb}
-            .flatMapLatest{ url in self.fireUtil.rxUploadData(data: self.viewModel.makePostData(), url: url!) }
+            .flatMapLatest{ url in self.viewModel.makePostData2(url: url!) }
+            .flatMapLatest{ uploadData in
+                self.fireUtil.rxUploadData(data: uploadData, url: uploadData["url"]!)
+            }
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { result in
                 if result! {
@@ -191,7 +194,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
                 SVProgressHUD.dismiss()
                 self.failRegister(message: err.localizedDescription)
             })
-        .disposed(by: disposeBag)
+            .disposed(by: disposeBag)
     }
 }
 

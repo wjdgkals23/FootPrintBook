@@ -79,6 +79,12 @@ class NewFootPrintViewModel {
         return returnData
     }
     
+    public func makePostData2(url: String) -> Observable<[String:String]> {
+        return Observable.combineLatest(titleConnector.asObservable(), latitudeValue.asObservable(), longitudeValue.asObservable(), resultSelector:{ a,b,c in
+            return ["name": a, "latitude": b, "longitude": c, "created": Date().description, "url": url]
+        })
+    }
+    
     public func makePostData() ->[String:String] {
         return [String:String]()
     }
