@@ -16,8 +16,8 @@ class NewFootPrintViewModel {
     private let disposeBag = DisposeBag()
     
     public let titleConnector:BehaviorSubject<String>
-    public let latitudeValue = BehaviorSubject(value: "")
-    public let longitudeValue = BehaviorSubject(value: "")
+    public let latitudeValue: BehaviorSubject<String>
+    public let longitudeValue: BehaviorSubject<String>
     public let newAnnoValue:BehaviorSubject<FootPrintAnnotation?> = BehaviorSubject(value: nil)
     public let postData = BehaviorSubject(value: [])
     public let image = BehaviorSubject(value: #imageLiteral(resourceName: "AddImage"))
@@ -26,15 +26,27 @@ class NewFootPrintViewModel {
     public let titleData: Driver<String>
     public let registerButtonEnabled: Driver<Bool>
     
-    public var latitude = ""
-    public var longitude = ""
+    public let latitude: Driver<String>
+    public let longitude: Driver<String>
     public let post: Observable<[String:String]>
     
-    init() {
+    init(_ lat: String, _ long: String) {
         titleConnector = BehaviorSubject(value: "")
         
         titleData = titleConnector
             .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: "")
+        
+        latitudeValue = BehaviorSubject(value: lat)
+        
+        latitude = latitudeValue
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: "")
+        
+        longitudeValue = BehaviorSubject(value: long)
+        
+        longitude = longitudeValue
+        .distinctUntilChanged()
             .asDriver(onErrorJustReturn: "")
         
         post = Observable.combineLatest(titleConnector.asObservable(), latitudeValue.asObservable(), longitudeValue.asObservable(), resultSelector:{ a,b,c in
@@ -54,16 +66,6 @@ class NewFootPrintViewModel {
             .subscribe({ [weak self] image in
                 guard let image = image.element else { return }
                 self?.scrollViewHeight = image.size.height
-            }).disposed(by: disposeBag)
-        
-        _ = latitudeValue.distinctUntilChanged()
-            .subscribe({ [weak self] latitude in
-                self?.latitude = latitude.element!
-            }).disposed(by: disposeBag)
-        
-        _ = longitudeValue.distinctUntilChanged()
-            .subscribe({ [weak self] longitude in
-                self?.longitude = longitude.element!
             }).disposed(by: disposeBag)
         
     }

@@ -17,7 +17,7 @@ import RxCocoa
 class NewFootPrintViewController: UIViewController, UINavigationControllerDelegate {
     
     let disposeBag = DisposeBag()
-    let viewModel = NewFootPrintViewModel()
+    var viewModel: NewFootPrintViewModel!
     
     var flag: Bool!
     var userInfo = UserInfo.shared
@@ -42,8 +42,7 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(newAnnotation.coordinate.latitude)
-        // Do any additional setup after loading the view.
+        viewModel = NewFootPrintViewModel(String(newAnnotation.coordinate.latitude), String(newAnnotation.coordinate.longitude))
         setupView()
         firstHeight = self.view.frame.height
         buttonEventBind()
@@ -75,12 +74,12 @@ class NewFootPrintViewController: UIViewController, UINavigationControllerDelega
             .drive(titleField.rx.text)
             .disposed(by: disposeBag)
         
-        latitudeTextField.rx.text.orEmpty
-            .bind(to: viewModel.latitudeValue)
+        viewModel.latitude
+            .drive(latitudeTextField.rx.text)
             .disposed(by: disposeBag)
         
-        longitudeTextField.rx.text.orEmpty
-            .bind(to: viewModel.longitudeValue)
+        viewModel.longitude
+            .drive(longitudeTextField.rx.text)
             .disposed(by: disposeBag)
         
         viewModel.registerButtonEnabled

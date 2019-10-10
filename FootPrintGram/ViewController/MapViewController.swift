@@ -150,6 +150,7 @@ class MapViewController: UIViewController {
         FireBaseUtil.shared.rxAllPostLoad2()
             .asDriver(onErrorJustReturn: [])
             .do(onNext: { AnnotationList in
+                self.mapView.removeAnnotations(self.mapView.annotations)
                 SVProgressHUD.dismiss()
             })
             .drive(mapView.rx.annotations)
