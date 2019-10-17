@@ -39,6 +39,8 @@ class MapViewController: UIViewController {
     var disposeBag = DisposeBag()
     var annotationImageDict: [String:UIImage] = [String:UIImage]()
     
+    let imageCache = NSCache<AnyObject, UIImage>()
+    
     
     // MARK: - Override Func
     override func viewDidLoad() {
@@ -157,11 +159,12 @@ class MapViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    private func loadImage2(_ item: FootPrintAnnotation) -> UIImage? {
+    private func loadImage2(_ item: FootPrintAnnotation) -> UIImage? { //cache
         let url = URL.init(string: item.post.imageUrl!)
         var image: UIImage!
         guard let data = NSData.init(contentsOf: url!) else {
             image = #imageLiteral(resourceName: "AddImage")
+            imageCache.setObject(image, forKey: url as AnyObject)
             self.annotationImageDict[item.post.title!] = image
             return image
         }
