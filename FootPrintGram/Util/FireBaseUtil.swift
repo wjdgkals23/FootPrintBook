@@ -29,7 +29,6 @@ class FireBaseUtil {
     
     private func callDeleteById(_ ind: Int, _ id: String) -> Promise<String> {
         return Promise<String> { scene -> Void in
-
             guard let imgUrl = FootPrintAnnotationList.shared.itemImageUrl(ind: ind) else { return }
             let deleteStorage = Storage.storage().reference(forURL: imgUrl)
             deleteStorage.delete(completion: { (err) in

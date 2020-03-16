@@ -16,6 +16,7 @@
 		9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */; };
 		9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454722F52F6C007573E3 /* MakeAlert.swift */; };
 		9003454A22F67573007573E3 /* NewFootPrintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9003454922F67573007573E3 /* NewFootPrintViewController.swift */; };
+		90E31770241FAF7800EBCA16 /* FootPrintGramBindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E3176F241FAF7800EBCA16 /* FootPrintGramBindable.swift */; };
 		F41165E3230CD29100A7339C /* DevideSimulReal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41165E2230CD29100A7339C /* DevideSimulReal.swift */; };
 		F46880F622F952D50079F07B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46880F522F952D50079F07B /* LoginViewController.swift */; };
 		F46880FC22F961B70079F07B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F46880FB22F961B70079F07B /* GoogleService-Info.plist */; };
@@ -41,6 +42,7 @@
 		9003454222F51BBF007573E3 /* FootPrintAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintAnnotation.swift; sourceTree = "<group>"; };
 		9003454722F52F6C007573E3 /* MakeAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeAlert.swift; sourceTree = "<group>"; };
 		9003454922F67573007573E3 /* NewFootPrintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFootPrintViewController.swift; sourceTree = "<group>"; };
+		90E3176F241FAF7800EBCA16 /* FootPrintGramBindable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootPrintGramBindable.swift; sourceTree = "<group>"; };
 		AA5A4E17614C80F0B7FD2BFD /* Pods-FootPrintGram.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FootPrintGram.debug.xcconfig"; path = "Target Support Files/Pods-FootPrintGram/Pods-FootPrintGram.debug.xcconfig"; sourceTree = "<group>"; };
 		F41165E2230CD29100A7339C /* DevideSimulReal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevideSimulReal.swift; sourceTree = "<group>"; };
 		F46880F522F952D50079F07B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				F4D50481233847B0003495AB /* NewFootPrintViewModel.swift */,
+				90E3176F241FAF7800EBCA16 /* FootPrintGramBindable.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				F468815D230A3CB30079F07B /* FootPrintTableCell.swift in Sources */,
 				F46880F622F952D50079F07B /* LoginViewController.swift in Sources */,
 				F4688151230389190079F07B /* Post.swift in Sources */,
+				90E31770241FAF7800EBCA16 /* FootPrintGramBindable.swift in Sources */,
 				F41165E3230CD29100A7339C /* DevideSimulReal.swift in Sources */,
 				9003454822F52F6C007573E3 /* MakeAlert.swift in Sources */,
 				9003454322F51BBF007573E3 /* FootPrintAnnotation.swift in Sources */,

@@ -46,7 +46,7 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        mapView.rx
+        self.mapView.rx
             .setDelegate(self)
             .disposed(by: disposeBag)
         
@@ -55,6 +55,12 @@ class MapViewController: UIViewController {
         
         setupView()
         checkLocationAuthorization()
+        
+        self.mapView.rx.annotationViewCalloutAccessoryControlTapped.subscribe(onNext: { (view, control) in
+            let presentedView = self.storyboard?.instantiateViewController(withIdentifier: "NewFootPrintViewController") as! NewFootPrintViewController
+            presentedView.newAnnotation = view.annotation as? FootPrintAnnotation
+            self.present(presentedView, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -293,14 +299,6 @@ extension MapViewController: MKMapViewDelegate {
             return annotationView
         }
         
-    }
-    
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        if let senderAnnotation = view.annotation as? FootPrintAnnotation {
-            let view = self.storyboard?.instantiateViewController(withIdentifier: "NewFootPrintViewController") as! NewFootPrintViewController
-            view.newAnnotation = senderAnnotation
-            self.present(view, animated: true, completion: nil)
-        }
     }
 }
 
