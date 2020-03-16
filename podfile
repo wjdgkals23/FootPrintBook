@@ -16,8 +16,8 @@ pod 'Firebase/Storage'
 pod 'GoogleSignIn', '4.4.0'
 pod 'SVProgressHUD'
 pod "PromiseKit", "~> 6.8"
-pod 'RxSwift'
-pod 'RxCocoa'
-pod 'RxMKMapView'
+pod 'RxSwift', '~> 5.1.0'
+pod 'RxCocoa', '~> 5.1.0'
+pod 'RxMKMapView', '~> 5.0.0'
 
 end
